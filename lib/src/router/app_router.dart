@@ -1,5 +1,9 @@
-import 'package:calclyo/src/features/category/presentation/view/category_list_view.dart';
-import 'package:calclyo/src/features/rule_of_three/presentation/view/rule_of_three_view.dart';
+import 'package:calclyo/src/calculator_registry.dart';
+import 'package:calclyo/src/calculators/form_view.dart';
+import 'package:calclyo/src/shell/app_shell.dart';
+import 'package:calclyo/src/shell/view/achievements_view.dart';
+import 'package:calclyo/src/shell/view/search_view.dart';
+import 'package:calclyo/src/shell/view/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,12 +16,30 @@ class AppRouter {
       GoRoute(
         path: '/',
         name: 'home',
-        builder: (context, state) => const CategoryListView(),
+        builder: (context, state) => const AppShell(),
         routes: [
+          for (final definition in calculatorRegistry.all)
+            GoRoute(
+              path: definition.route.replaceFirst('/', ''),
+              name: definition.id,
+              builder: (context, state) => CalculatorFormView(
+                definition: definition,
+              ),
+            ),
           GoRoute(
-            path: 'rule-of-three',
-            name: 'rule-of-three',
-            builder: (context, state) => const RuleOfThreeView(),
+            path: 'achievements',
+            name: 'achievements',
+            builder: (context, state) => const AchievementsView(),
+          ),
+          GoRoute(
+            path: 'search',
+            name: 'search',
+            builder: (context, state) => const SearchView(),
+          ),
+          GoRoute(
+            path: 'settings',
+            name: 'settings',
+            builder: (context, state) => const SettingsView(),
           ),
         ],
       ),
