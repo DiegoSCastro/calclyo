@@ -94,7 +94,7 @@ const ruleOfThreeDefinition = CalculatorDefinition(
   icon: const IconData(0xe1ec, fontFamily: 'MaterialIcons'), // Icons.calculate
   accent: const Color(0xFF1E88E5),
   route: '/rule-of-three',
-  category: CalculatorCategoryId.math,
+  category: CalculatorCategoryId.algebra,
   inputSchema: _ruleOfThreeInputSchema,
   compute: _ruleOfThreeCompute,
   stepRenderer: _ruleOfThreeStepRenderer,

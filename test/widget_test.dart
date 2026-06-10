@@ -21,34 +21,40 @@ void main() {
   });
 
   group('CategoryRegistry.categoriesWithCalculators', () {
-    test('drops categories with no calculators', () {
-      // Only math has a calculator registered — geometry, finance, etc.
-      // should be absent from the grouped list.
+    test('only algebra is populated in v0.2', () {
+      // v0.2 only ships Rule of Three. t_0680951d adds the remaining 34.
       final ids = calculatorRegistry.categoriesWithCalculators
           .map((g) => g.category.id)
           .toSet();
-      expect(ids, {CalculatorCategoryId.math});
+      expect(ids, {CalculatorCategoryId.algebra});
     });
   });
 
-  testWidgets('CalclyoApp boots and shows the home screen', (tester) async {
+  testWidgets('AppShell home shows the Algebra section header and the '
+      'Rule of Three tile', (tester) async {
     await tester.pumpWidget(const CalclyoApp());
-    await tester.pump();
-    expect(find.text('Calclyo'), findsOneWidget);
-  });
-
-  testWidgets('tapping the math category expands to show its calculators',
-      (tester) async {
-    await tester.pumpWidget(const CalclyoApp());
-    await tester.pump();
-
-    // The Math category tile is rendered; tap to expand.
-    expect(find.text('Math'), findsOneWidget);
-    await tester.tap(find.text('Math'));
     await tester.pumpAndSettle();
 
-    // The Rule of Three tile is now visible.
+    // The avatar header is present.
+    expect(find.text('Sign in'), findsOneWidget);
+
+    // The Algebra section header (rendered uppercase).
+    expect(find.text('ALGEBRA'), findsOneWidget);
+
+    // The Rule of Three tile is on the home screen.
     expect(find.text('Rule of Three'), findsOneWidget);
+  });
+
+  testWidgets('tapping a calculator tile navigates to its form view',
+      (tester) async {
+    await tester.pumpWidget(const CalclyoApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Rule of Three'));
+    await tester.pumpAndSettle();
+
+    // CalculatorFormView renders the calc name in the app bar.
+    expect(find.text('Rule of Three'), findsWidgets);
   });
 
   testWidgets('CalculatorFormView renders the rule of three form',

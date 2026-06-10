@@ -24,8 +24,8 @@ void main() {
     test('groups by category in CalculatorCategoryId declaration order', () {
       final groups = calculatorRegistry.categoriesWithCalculators;
       expect(groups, isNotEmpty);
-      // First group with calculators must be math (lowest id with content).
-      expect(groups.first.category.id, CalculatorCategoryId.math);
+      // First group with calculators must be algebra (lowest id with content).
+      expect(groups.first.category.id, CalculatorCategoryId.algebra);
       expect(
         groups.first.calculators.map((c) => c.id),
         contains('rule-of-three'),

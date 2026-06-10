@@ -3,13 +3,17 @@ import 'package:equatable/equatable.dart';
 import 'package:calclyo/src/core/calculator.dart';
 
 /// Domain id of a calculator category.
+///
+/// Declaration order is meaningful: [CategoryRegistry] emits groups in
+/// this order, so the home screen lists Algebra first, Science last.
 enum CalculatorCategoryId {
-  math,
+  algebra,
   geometry,
+  converter,
+  lifestyle,
   finance,
   health,
-  converter,
-  everyday,
+  dateTime,
   science,
 }
 
@@ -107,12 +111,12 @@ class CategoryRegistry {
 
   static CalculatorCategory _metadataFor(CalculatorCategoryId id) {
     switch (id) {
-      case CalculatorCategoryId.math:
+      case CalculatorCategoryId.algebra:
         return const CalculatorCategory(
-          id: CalculatorCategoryId.math,
-          name: 'Math',
+          id: CalculatorCategoryId.algebra,
+          name: 'Algebra',
           iconCodePoint: 0xe1ec, // Icons.calculate
-          description: 'Algebra, trigonometry, percentages, fractions',
+          description: 'Percentages, ratios, equations, averages',
         );
       case CalculatorCategoryId.geometry:
         return const CalculatorCategory(
@@ -120,6 +124,20 @@ class CategoryRegistry {
           name: 'Geometry',
           iconCodePoint: 0xe1b1, // Icons.category
           description: 'Area, volume, perimeter, triangles, circles',
+        );
+      case CalculatorCategoryId.converter:
+        return const CalculatorCategory(
+          id: CalculatorCategoryId.converter,
+          name: 'Unit Converter',
+          iconCodePoint: 0xe8d5, // Icons.swap_horiz
+          description: 'Length, weight, temperature, time, data',
+        );
+      case CalculatorCategoryId.lifestyle:
+        return const CalculatorCategory(
+          id: CalculatorCategoryId.lifestyle,
+          name: 'Lifestyle',
+          iconCodePoint: 0xe865, // Icons.schedule
+          description: 'Roman numerals, shoe and clothing sizes',
         );
       case CalculatorCategoryId.finance:
         return const CalculatorCategory(
@@ -133,28 +151,21 @@ class CategoryRegistry {
           id: CalculatorCategoryId.health,
           name: 'Health',
           iconCodePoint: 0xe87d, // Icons.favorite
-          description: 'BMI, BMR, ideal weight — for reference only',
+          description: 'BMI, BMR, body fat — for reference only',
         );
-      case CalculatorCategoryId.converter:
+      case CalculatorCategoryId.dateTime:
         return const CalculatorCategory(
-          id: CalculatorCategoryId.converter,
-          name: 'Unit Converter',
-          iconCodePoint: 0xe8d5, // Icons.swap_horiz
-          description: 'Length, weight, temperature, time, currency',
-        );
-      case CalculatorCategoryId.everyday:
-        return const CalculatorCategory(
-          id: CalculatorCategoryId.everyday,
-          name: 'Everyday',
-          iconCodePoint: 0xe865, // Icons.schedule
-          description: 'Date math, time zones, countdowns, age',
+          id: CalculatorCategoryId.dateTime,
+          name: 'Date & Time',
+          iconCodePoint: 0xe425, // Icons.calendar_today
+          description: 'Age, date math, time intervals',
         );
       case CalculatorCategoryId.science:
         return const CalculatorCategory(
           id: CalculatorCategoryId.science,
           name: 'Science',
           iconCodePoint: 0xea4b, // Icons.science
-          description: 'Physics constants, conversions, formulas',
+          description: 'Physics formulas and conversions',
         );
     }
   }
