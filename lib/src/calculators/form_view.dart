@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 /// Generic, schema-driven calculator view.
 ///
 /// Reads a [CalculatorDefinition], builds a form from
-/// [CalculatorDefinition.inputSchema] (number fields + controls), runs
+/// [CalculatorDefinition.inputSchema] (text fields + controls), runs
 /// [CalculatorDefinition.compute] on submit, and renders the result with
 /// [CalculatorDefinition.stepRenderer].
 ///
@@ -22,7 +22,7 @@ class CalculatorFormView extends StatefulWidget {
 
 class _CalculatorFormViewState extends State<CalculatorFormView> {
   late final Map<String, TextEditingController> _controllers;
-  final Map<String, double> _controlValues = {};
+  final Map<String, String> _controlValues = {};
   CalculatorResult? _result;
   String? _error;
 
@@ -35,7 +35,7 @@ class _CalculatorFormViewState extends State<CalculatorFormView> {
     };
     for (final c in widget.definition.inputSchema.controls) {
       if (c is SegmentedToggleControl) {
-        _controlValues[c.key] = c.initialIndex.toDouble();
+        _controlValues[c.key] = c.options[c.initialIndex];
       }
     }
   }
@@ -49,17 +49,9 @@ class _CalculatorFormViewState extends State<CalculatorFormView> {
   }
 
   Future<void> _onCalculate() async {
-    final values = <String, double>{..._controlValues};
+    final values = <String, String>{..._controlValues};
     for (final entry in _controllers.entries) {
-      final parsed = double.tryParse(entry.value.text.trim());
-      if (parsed == null) {
-        setState(() {
-          _result = null;
-          _error = 'Enter a valid number for "${entry.key}"';
-        });
-        return;
-      }
-      values[entry.key] = parsed;
+      values[entry.key] = entry.value.text;
     }
     final result = await widget.definition.compute(values).run();
     if (!mounted) return;
@@ -95,10 +87,7 @@ class _CalculatorFormViewState extends State<CalculatorFormView> {
             for (final field in definition.inputSchema.fields) ...[
               TextField(
                 controller: _controllers[field.key],
-                keyboardType: TextInputType.numberWithOptions(
-                  decimal: field.allowDecimal,
-                  signed: field.allowSigned,
-                ),
+                keyboardType: _keyboardTypeFor(field),
                 decoration: InputDecoration(
                   labelText: field.label,
                   helperText: field.helper,
@@ -124,6 +113,18 @@ class _CalculatorFormViewState extends State<CalculatorFormView> {
         ),
       ),
     );
+  }
+
+  TextInputType _keyboardTypeFor(CalculatorInputField field) {
+    switch (field.keyboardType) {
+      case CalculatorKeyboardType.text:
+        return TextInputType.text;
+      case CalculatorKeyboardType.number:
+        return TextInputType.numberWithOptions(
+          decimal: field.allowDecimal,
+          signed: field.allowSigned,
+        );
+    }
   }
 }
 

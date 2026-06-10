@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('CategoryRegistry', () {
-    test('starts with the rule of three in the math category', () {
+    test('starts with the rule of three in the algebra category', () {
       expect(calculatorRegistry.all, isNotEmpty);
       expect(calculatorRegistry.findById('rule-of-three'), isNotNull);
     });
@@ -49,6 +49,12 @@ void main() {
           contains(calc.id),
         );
       }
+    });
+
+    test('exposes 35+ calculators across 8 categories (v0.2 seed)', () {
+      expect(calculatorRegistry.all.length, greaterThanOrEqualTo(35));
+      final groups = calculatorRegistry.categoriesWithCalculators;
+      expect(groups.length, greaterThanOrEqualTo(8));
     });
   });
 }

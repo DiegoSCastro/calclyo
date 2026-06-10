@@ -13,6 +13,7 @@ class CalculatorInputField extends Equatable {
     this.defaultValue,
     this.allowDecimal = true,
     this.allowSigned = true,
+    this.keyboardType = CalculatorKeyboardType.number,
   });
 
   /// Stable identifier — used to read the value out of the form map.
@@ -30,6 +31,7 @@ class CalculatorInputField extends Equatable {
 
   final bool allowDecimal;
   final bool allowSigned;
+  final CalculatorKeyboardType keyboardType;
 
   @override
   List<Object?> get props => [
@@ -39,23 +41,34 @@ class CalculatorInputField extends Equatable {
         defaultValue,
         allowDecimal,
         allowSigned,
+        keyboardType,
       ];
 }
 
+/// How the form view renders the on-screen keyboard for an input field.
+enum CalculatorKeyboardType {
+  /// Standard decimal/signed numeric keyboard.
+  number,
+
+  /// Plain text keyboard. Use for dates, time strings, roman numerals, etc.
+  text,
+}
+
 /// Calculator-specific UI controls that aren't number fields. Each control
-/// writes a numeric value into the values map (so the [CalculatorDefinition.compute]
-/// function can still consume a uniform `Map<String, double>`).
+/// writes a string value into the values map (so the
+/// [CalculatorDefinition.compute] function can still consume a uniform
+/// `Map<String, String>`).
 sealed class CalculatorControl extends Equatable {
   const CalculatorControl({required this.key});
   final String key;
 
   /// Build the widget the form view will place in the layout.
-  Widget build(BuildContext context, ValueChanged<double> onChanged);
+  Widget build(BuildContext context, ValueChanged<String> onChanged);
 }
 
 /// A single-select toggle rendered as a [SegmentedButton]. Used for things
-/// like direct/inverse mode switches — the selected option's index is
-/// written to the values map as a double.
+/// like direct/inverse mode switches — the selected option's label is
+/// written to the values map as a string.
 class SegmentedToggleControl extends CalculatorControl {
   const SegmentedToggleControl({
     required super.key,
@@ -70,24 +83,24 @@ class SegmentedToggleControl extends CalculatorControl {
   List<Object?> get props => [key, options, initialIndex];
 
   @override
-  Widget build(BuildContext context, ValueChanged<double> onChanged) {
+  Widget build(BuildContext context, ValueChanged<String> onChanged) {
     return SegmentedButton<int>(
       segments: [
         for (var i = 0; i < options.length; i++)
           ButtonSegment<int>(value: i, label: Text(options[i])),
       ],
       selected: {initialIndex},
-      onSelectionChanged: (set) => onChanged(set.first.toDouble()),
+      onSelectionChanged: (set) => onChanged(options[set.first]),
     );
   }
 }
 
 /// Schema describing what a calculator needs from the user.
 ///
-/// Each calculator exposes a fixed [fields] list (number inputs) and
+/// Each calculator exposes a fixed [fields] list (text/number inputs) and
 /// optional [controls] list (segmented buttons, sliders, etc.). The UI
 /// layer builds a form from this schema; the compute function receives a
-/// `Map<String, double>` keyed by [CalculatorInputField.key] /
+/// `Map<String, String>` keyed by [CalculatorInputField.key] /
 /// [CalculatorControl.key].
 class CalculatorInputSchema extends Equatable {
   const CalculatorInputSchema({this.fields = const [], this.controls = const []});
@@ -174,11 +187,14 @@ class CalculatorDefinition extends Equatable {
   /// Form schema the UI builds inputs from.
   final CalculatorInputSchema inputSchema;
 
-  /// Pure async function turning parsed inputs into either a failure or a
-  /// result. Returning a [TaskEither] keeps error handling uniform across
-  /// calculators — no `try/catch` leaks into the UI layer.
+  /// Pure async function turning raw form input strings into either a
+  /// failure or a result. Receiving a [Map] of raw strings (rather than
+  /// parsed doubles) lets the same shape serve both numeric and text
+  /// inputs (dates, roman numerals, time strings). Returning a
+  /// [TaskEither] keeps error handling uniform — no `try/catch` leaks
+  /// into the UI layer.
   final TaskEither<CalculatorFailure, CalculatorResult> Function(
-    Map<String, double> values,
+    Map<String, String> values,
   ) compute;
 
   /// Widget that renders the explanation. Receives the result and the theme.

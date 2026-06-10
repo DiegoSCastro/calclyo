@@ -21,11 +21,13 @@ void main() {
       required double c,
       required RuleOfThreeKind kind,
     }) async {
-      // The generic form view encodes the kind toggle as 0 (direct) or 1
-      // (inverse). Replicate that here.
-      final kindValue = kind == RuleOfThreeKind.direct ? 0.0 : 1.0;
-      final result = await compute({'a': a, 'b': b, 'c': c, 'kind': kindValue})
-          .run();
+      final kindValue = kind == RuleOfThreeKind.direct ? 'Direct' : 'Inverse';
+      final result = await compute({
+        'a': a.toString(),
+        'b': b.toString(),
+        'c': c.toString(),
+        'kind': kindValue,
+      }).run();
       return result.getOrElse(
         (f) => throw StateError('expected right, got failure: $f'),
       ).primary;
@@ -48,8 +50,12 @@ void main() {
     });
 
     test('fails when a is zero', () async {
-      final result =
-          await compute({'a': 0, 'b': 10, 'c': 5, 'kind': 0.0}).run();
+      final result = await compute({
+        'a': '0',
+        'b': '10',
+        'c': '5',
+        'kind': 'Direct',
+      }).run();
       expect(result.isLeft(), isTrue);
       final failure = result.getLeft().toNullable();
       expect(failure, isNotNull);
@@ -57,7 +63,11 @@ void main() {
 
     test('defaults to direct when the kind toggle is absent', () async {
       // No 'kind' key → treated as direct.
-      final result = await compute({'a': 2, 'b': 10, 'c': 7}).run();
+      final result = await compute({
+        'a': '2',
+        'b': '10',
+        'c': '7',
+      }).run();
       final value = result.getOrElse(
         (f) => throw StateError('expected right, got failure: $f'),
       );

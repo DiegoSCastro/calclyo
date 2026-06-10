@@ -14,7 +14,7 @@ class AppShell extends StatelessWidget {
 
   /// v0.2: the primary FAB always quick-launches the Rule of Three.
   /// A later task swaps it for a "Recent" sheet.
-  static const _quickLaunchRoute = '/calc/rule-of-three';
+  static const _quickLaunchRoute = '/rule-of-three';
 
   @override
   Widget build(BuildContext context) {

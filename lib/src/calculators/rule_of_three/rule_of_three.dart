@@ -8,6 +8,8 @@ import 'package:fpdart/fpdart.dart';
 enum RuleOfThreeKind { direct, inverse }
 
 const _kindKey = 'kind';
+const _kindDirect = 'Direct';
+const _kindInverse = 'Inverse';
 
 const _ruleOfThreeInputSchema = CalculatorInputSchema(
   fields: [
@@ -18,16 +20,37 @@ const _ruleOfThreeInputSchema = CalculatorInputSchema(
   controls: [
     SegmentedToggleControl(
       key: _kindKey,
-      options: ['Direct', 'Inverse'],
+      options: [_kindDirect, _kindInverse],
     ),
   ],
 );
+
+/// Parse a numeric form field, returning a [CalculatorFailure] for blank or
+/// non-numeric input. Kept here so each calculator doesn't reinvent it.
+double parseField(
+  String raw, {
+  required String key,
+  bool allowZero = true,
+}) {
+  final trimmed = raw.trim();
+  if (trimmed.isEmpty) {
+    throw CalculatorFailure('"$key" is required');
+  }
+  final v = double.tryParse(trimmed);
+  if (v == null) {
+    throw CalculatorFailure('"$key" is not a valid number');
+  }
+  if (!allowZero && v == 0) {
+    throw CalculatorFailure('"$key" must be non-zero');
+  }
+  return v;
+}
 
 /// Pure rule-of-three compute function. Reads the three operands and the
 /// kind toggle from the values map, returns the result wrapped in
 /// [TaskEither] so the generic form view can render failures uniformly.
 TaskEither<CalculatorFailure, CalculatorResult> _ruleOfThreeCompute(
-  Map<String, double> values,
+  Map<String, String> values,
 ) {
   return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(
     () async => _solveOrThrow(values),
@@ -37,34 +60,24 @@ TaskEither<CalculatorFailure, CalculatorResult> _ruleOfThreeCompute(
   );
 }
 
-CalculatorResult _solveOrThrow(Map<String, double> values) {
-  final a = values['a'];
-  final b = values['b'];
-  final c = values['c'];
-  if (a == null || b == null || c == null) {
-    throw const CalculatorFailure('All three values (a, b, c) are required');
-  }
-  if (a == 0) {
-    throw const CalculatorFailure('Value "a" must be non-zero');
-  }
-  return _solve(values);
+CalculatorResult _solveOrThrow(Map<String, String> values) {
+  final a = parseField(values['a'] ?? '', key: 'a', allowZero: false);
+  final b = parseField(values['b'] ?? '', key: 'b');
+  final c = parseField(values['c'] ?? '', key: 'c');
+  return _solve(a, b, c, values[_kindKey] ?? _kindDirect);
 }
 
-CalculatorResult _solve(Map<String, double> values) {
-  final a = values['a']!;
-  final b = values['b']!;
-  final c = values['c']!;
-  final kind = (values[_kindKey] ?? 0) < 0.5
-      ? RuleOfThreeKind.direct
-      : RuleOfThreeKind.inverse;
+CalculatorResult _solve(double a, double b, double c, String kindRaw) {
+  final kind = kindRaw == _kindInverse
+      ? RuleOfThreeKind.inverse
+      : RuleOfThreeKind.direct;
 
   final x = switch (kind) {
     RuleOfThreeKind.direct => (b * c) / a,
     RuleOfThreeKind.inverse => (a * b) / c,
   };
 
-  final kindLabel =
-      kind == RuleOfThreeKind.direct ? 'Direct' : 'Inverse';
+  final kindLabel = kind == RuleOfThreeKind.direct ? 'Direct' : 'Inverse';
   final steps = <String>[
     'Proportion: $kindLabel rule of three',
     'Given: a=$a, b=$b, c=$c',
@@ -91,8 +104,8 @@ const ruleOfThreeDefinition = CalculatorDefinition(
   id: 'rule-of-three',
   name: 'Rule of Three',
   subtitle: 'Solve direct and inverse proportions',
-  icon: const IconData(0xe1ec, fontFamily: 'MaterialIcons'), // Icons.calculate
-  accent: const Color(0xFF1E88E5),
+  icon: IconData(0xe1ec, fontFamily: 'MaterialIcons'), // Icons.calculate
+  accent: Color(0xFF1E88E5),
   route: '/rule-of-three',
   category: CalculatorCategoryId.algebra,
   inputSchema: _ruleOfThreeInputSchema,
