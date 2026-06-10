@@ -1,11 +1,12 @@
+import 'package:calclyo/src/core/categories.dart';
+import 'package:calclyo/src/router/app_router.dart' show AppRouter;
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 
-import 'package:calclyo/src/core/categories.dart';
-
 /// Description of a single calculator input field.
 class CalculatorInputField extends Equatable {
+  /// Creates [CalculatorInputField].
   const CalculatorInputField({
     required this.key,
     required this.label,
@@ -29,20 +30,25 @@ class CalculatorInputField extends Equatable {
   /// submitted as-is if the user does not edit it.
   final String? defaultValue;
 
+  /// allowDecimal.
   final bool allowDecimal;
+
+  /// allowSigned.
   final bool allowSigned;
+
+  /// keyboardType.
   final CalculatorKeyboardType keyboardType;
 
   @override
   List<Object?> get props => [
-        key,
-        label,
-        helper,
-        defaultValue,
-        allowDecimal,
-        allowSigned,
-        keyboardType,
-      ];
+    key,
+    label,
+    helper,
+    defaultValue,
+    allowDecimal,
+    allowSigned,
+    keyboardType,
+  ];
 }
 
 /// How the form view renders the on-screen keyboard for an input field.
@@ -60,6 +66,8 @@ enum CalculatorKeyboardType {
 /// `Map<String, String>`).
 sealed class CalculatorControl extends Equatable {
   const CalculatorControl({required this.key});
+
+  /// key.
   final String key;
 
   /// Build the widget the form view will place in the layout.
@@ -70,13 +78,17 @@ sealed class CalculatorControl extends Equatable {
 /// like direct/inverse mode switches — the selected option's label is
 /// written to the values map as a string.
 class SegmentedToggleControl extends CalculatorControl {
+  /// Creates [SegmentedToggleControl].
   const SegmentedToggleControl({
     required super.key,
     required this.options,
     this.initialIndex = 0,
   });
 
+  /// options.
   final List<String> options;
+
+  /// initialIndex.
   final int initialIndex;
 
   @override
@@ -103,9 +115,16 @@ class SegmentedToggleControl extends CalculatorControl {
 /// `Map<String, String>` keyed by [CalculatorInputField.key] /
 /// [CalculatorControl.key].
 class CalculatorInputSchema extends Equatable {
-  const CalculatorInputSchema({this.fields = const [], this.controls = const []});
+  /// Creates [CalculatorInputSchema].
+  const CalculatorInputSchema({
+    this.fields = const [],
+    this.controls = const [],
+  });
 
+  /// fields.
   final List<CalculatorInputField> fields;
+
+  /// controls.
   final List<CalculatorControl> controls;
 
   @override
@@ -118,14 +137,20 @@ class CalculatorInputSchema extends Equatable {
 /// human-readable explanation, and [primaryLabel] is shown next to the
 /// value (e.g. "x =", "Area =").
 class CalculatorResult extends Equatable {
+  /// Creates [CalculatorResult].
   const CalculatorResult({
     required this.primary,
     required this.steps,
     this.primaryLabel = 'Result',
   });
 
+  /// primary.
   final double primary;
+
+  /// primaryLabel.
   final String primaryLabel;
+
+  /// steps.
   final List<String> steps;
 
   @override
@@ -135,7 +160,10 @@ class CalculatorResult extends Equatable {
 /// Failure emitted by a calculator's compute function. Messages should be
 /// user-facing — the UI renders them verbatim.
 class CalculatorFailure implements Exception {
+  /// Creates [CalculatorFailure].
   const CalculatorFailure(this.message);
+
+  /// message.
   final String message;
 
   @override
@@ -150,6 +178,7 @@ class CalculatorFailure implements Exception {
 /// icon, accent, route, inputs, compute) from this object — no other code
 /// path needs to know about a specific calculator.
 class CalculatorDefinition extends Equatable {
+  /// CalculatorDefinition.
   const CalculatorDefinition({
     required this.id,
     required this.name,
@@ -195,21 +224,22 @@ class CalculatorDefinition extends Equatable {
   /// into the UI layer.
   final TaskEither<CalculatorFailure, CalculatorResult> Function(
     Map<String, String> values,
-  ) compute;
+  )
+  compute;
 
   /// Widget that renders the explanation. Receives the result and the theme.
   final Widget Function(BuildContext context, CalculatorResult result)
-      stepRenderer;
+  stepRenderer;
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        subtitle,
-        icon.codePoint,
-        accent,
-        route,
-        category,
-        inputSchema,
-      ];
+    id,
+    name,
+    subtitle,
+    icon.codePoint,
+    accent,
+    route,
+    category,
+    inputSchema,
+  ];
 }

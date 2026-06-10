@@ -22,7 +22,7 @@ void main() {
       }).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, 30.0);
     });
@@ -33,9 +33,11 @@ void main() {
         'n': '1',
         'unit': 'days',
       }).run();
-      expect(result.isLeft(), isTrue,
-          reason: 'expected failure for start=bad, n=1, unit=days');
+      expect(
+        result.isLeft(),
+        isTrue,
+        reason: 'expected failure for start=bad, n=1, unit=days',
+      );
     });
-
   });
 }

@@ -15,28 +15,21 @@ void main() {
     final compute = dataStorageDefinition.compute;
 
     test('1 MB = 1048576 B', () async {
-      final result = await compute({
-        'v': '1',
-        'unit': 'MB',
-      }).run();
+      final result = await compute({'v': '1', 'unit': 'MB'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(1048576, 1e-06));
     });
 
     test('1024 B = 1 KB', () async {
-      final result = await compute({
-        'v': '1024',
-        'unit': 'B',
-      }).run();
+      final result = await compute({'v': '1024', 'unit': 'B'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(1024.0, 1e-06));
     });
-
   });
 }

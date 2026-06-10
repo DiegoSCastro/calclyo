@@ -1,11 +1,10 @@
 import 'package:calclyo/src/calculators/_widgets.dart';
+import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
+    show parseField;
 import 'package:calclyo/src/core/calculator.dart';
 import 'package:calclyo/src/core/categories.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
-
-import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
-    show parseField;
 
 const _tipInputSchema = CalculatorInputSchema(
   fields: [
@@ -17,27 +16,25 @@ const _tipInputSchema = CalculatorInputSchema(
 TaskEither<CalculatorFailure, CalculatorResult> _compute(
   Map<String, String> values,
 ) {
-  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(
-    () async {
-      final bill = parseField(values['bill'] ?? '', key: 'bill');
-      final pct = parseField(values['pct'] ?? '', key: 'pct');
-      final tip = bill * pct / 100;
-      final total = bill + tip;
-      return CalculatorResult(
-        primary: tip,
-        primaryLabel: 'Tip',
-        steps: [
-          'Bill: $bill',
-          'Tip %: $pct',
-          'Tip = Bill × Pct / 100 = ${tip.toStringAsFixed(6)}',
-          'Total = Bill + Tip = ${total.toStringAsFixed(6)}',
-        ],
-      );
-    },
-    (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()),
-  );
+  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(() async {
+    final bill = parseField(values['bill'] ?? '', key: 'bill');
+    final pct = parseField(values['pct'] ?? '', key: 'pct');
+    final tip = bill * pct / 100;
+    final total = bill + tip;
+    return CalculatorResult(
+      primary: tip,
+      primaryLabel: 'Tip',
+      steps: [
+        'Bill: $bill',
+        'Tip %: $pct',
+        'Tip = Bill × Pct / 100 = ${tip.toStringAsFixed(6)}',
+        'Total = Bill + Tip = ${total.toStringAsFixed(6)}',
+      ],
+    );
+  }, (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()));
 }
 
+/// Registry entry for the tip calculator.
 const tipDefinition = CalculatorDefinition(
   id: 'tip',
   name: 'Tip',

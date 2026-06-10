@@ -89,43 +89,35 @@ int _romanToInt(String s) {
 TaskEither<CalculatorFailure, CalculatorResult> _compute(
   Map<String, String> values,
 ) {
-  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(
-    () async {
-      final raw = (values['v'] ?? '').trim();
-      if (raw.isEmpty) {
-        throw const CalculatorFailure('Value is required');
+  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(() async {
+    final raw = (values['v'] ?? '').trim();
+    if (raw.isEmpty) {
+      throw const CalculatorFailure('Value is required');
+    }
+    final dir = values['dir'] ?? 'Number → Roman';
+    if (dir == 'Number → Roman') {
+      final n = int.tryParse(raw);
+      if (n == null) {
+        throw const CalculatorFailure('Enter a whole number');
       }
-      final dir = values['dir'] ?? 'Number → Roman';
-      if (dir == 'Number → Roman') {
-        final n = int.tryParse(raw);
-        if (n == null) {
-          throw const CalculatorFailure('Enter a whole number');
-        }
-        final roman = _intToRoman(n);
-        return CalculatorResult(
-          primary: n.toDouble(),
-          primaryLabel: 'Roman',
-          steps: [
-            'Number: $n',
-            'Roman: $roman',
-          ],
-        );
-      } else {
-        final n = _romanToInt(raw);
-        return CalculatorResult(
-          primary: n.toDouble(),
-          primaryLabel: 'Number',
-          steps: [
-            'Roman: ${raw.toUpperCase()}',
-            'Number: $n',
-          ],
-        );
-      }
-    },
-    (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()),
-  );
+      final roman = _intToRoman(n);
+      return CalculatorResult(
+        primary: n.toDouble(),
+        primaryLabel: 'Roman',
+        steps: ['Number: $n', 'Roman: $roman'],
+      );
+    } else {
+      final n = _romanToInt(raw);
+      return CalculatorResult(
+        primary: n.toDouble(),
+        primaryLabel: 'Number',
+        steps: ['Roman: ${raw.toUpperCase()}', 'Number: $n'],
+      );
+    }
+  }, (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()));
 }
 
+/// Registry entry for the romanNumerals calculator.
 const romanNumeralsDefinition = CalculatorDefinition(
   id: 'roman_numerals',
   name: 'Roman Numerals',

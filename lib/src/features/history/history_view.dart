@@ -10,12 +10,13 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Lazily-initialised singleton [HistoryRepository]. Production code
-/// reads it via [HistoryPage.repository] from inside the page.
+/// reads it via [HistoryRepositoryProvider.instance].
 class HistoryRepositoryProvider {
   HistoryRepositoryProvider._();
 
   static HistoryRepository? _instance;
 
+  /// The bootstrapped repository instance.
   static HistoryRepository get instance {
     final existing = _instance;
     if (existing != null) return existing;
@@ -42,6 +43,7 @@ class HistoryRepositoryProvider {
 
   /// Test-only override. Lets unit/widget tests inject a fake without
   /// touching [SharedPreferences].
+  // ignore: use_setters_to_change_properties
   static void debugSet(HistoryRepository repository) {
     _instance = repository;
   }
@@ -55,6 +57,7 @@ class HistoryRepositoryProvider {
 /// The /history page. Renders the [HistoryCubit] over the singleton
 /// [HistoryRepository].
 class HistoryPage extends StatelessWidget {
+  /// Creates [HistoryPage].
   const HistoryPage({super.key});
 
   /// Helper for tests: build a `HistoryPage` that uses [repository]
@@ -69,8 +72,8 @@ class HistoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => HistoryCubit(HistoryRepositoryProvider.instance)
-        ..refresh(),
+      create: (_) =>
+          HistoryCubit(HistoryRepositoryProvider.instance)..refresh(),
       child: const HistoryView(),
     );
   }
@@ -78,6 +81,7 @@ class HistoryPage extends StatelessWidget {
 
 /// The actual UI. Watches [HistoryCubit] for the list of entries.
 class HistoryView extends StatelessWidget {
+  /// Creates [HistoryView].
   const HistoryView({super.key});
 
   @override
@@ -166,8 +170,7 @@ class _HistoryTile extends StatelessWidget {
       leading: CircleAvatar(
         backgroundColor: (definition?.accent ?? theme.colorScheme.primary)
             .withValues(alpha: 0.15),
-        foregroundColor:
-            definition?.accent ?? theme.colorScheme.onSurface,
+        foregroundColor: definition?.accent ?? theme.colorScheme.onSurface,
         child: Icon(icon),
       ),
       title: Text(name),
@@ -201,16 +204,11 @@ class _HistoryTile extends StatelessWidget {
   ) {
     if (definition == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('This calculator is no longer available'),
-        ),
+        const SnackBar(content: Text('This calculator is no longer available')),
       );
       return;
     }
-    context.go(
-      definition.route,
-      extra: <String, String>{...entry.inputs},
-    );
+    context.go(definition.route, extra: <String, String>{...entry.inputs});
   }
 }
 
@@ -232,10 +230,7 @@ class _EmptyState extends StatelessWidget {
               color: theme.colorScheme.onSurfaceVariant,
             ),
             const SizedBox(height: 12),
-            Text(
-              'No recent calculations',
-              style: theme.textTheme.titleMedium,
-            ),
+            Text('No recent calculations', style: theme.textTheme.titleMedium),
             const SizedBox(height: 4),
             Text(
               'Your last 50 calculations will show up here automatically.',

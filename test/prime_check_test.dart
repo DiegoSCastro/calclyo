@@ -15,26 +15,21 @@ void main() {
     final compute = primeCheckDefinition.compute;
 
     test('17 is prime', () async {
-      final result = await compute({
-        'n': '17',
-      }).run();
+      final result = await compute({'n': '17'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, 1.0);
     });
 
     test('18 is not prime', () async {
-      final result = await compute({
-        'n': '18',
-      }).run();
+      final result = await compute({'n': '18'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, 0.0);
     });
-
   });
 }

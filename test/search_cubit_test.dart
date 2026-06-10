@@ -49,20 +49,15 @@ void main() {
         ),
         isA<SearchState>()
             .having((s) => s.status, 'status', SearchStatus.ready)
-            .having(
-              (s) => s.recentQueries,
-              'recentQueries',
-              ['percent'],
-            ),
+            .having((s) => s.recentQueries, 'recentQueries', ['percent']),
       ],
     );
 
     blocTest<SearchCubit, SearchState>(
       'updateQuery recomputes results live (no I/O)',
       build: () => SearchCubit(recents: repo()),
-      seed: () => const SearchState.initial().copyWith(
-        status: SearchStatus.ready,
-      ),
+      seed: () =>
+          const SearchState.initial().copyWith(status: SearchStatus.ready),
       act: (c) => c.updateQuery('tip'),
       expect: () => [
         isA<SearchState>()
@@ -113,10 +108,10 @@ void main() {
       setUp: () async {
         // Seed the store so push() sees the prior recents and dedupes
         // against them.
-        await prefs.setStringList(
-          'search.recents.v1',
-          const ['percent', 'bmi'],
-        );
+        await prefs.setStringList('search.recents.v1', const [
+          'percent',
+          'bmi',
+        ]);
       },
       build: () => SearchCubit(recents: repo(maxRecents: 3)),
       seed: () => const SearchState(
@@ -127,20 +122,19 @@ void main() {
       ),
       act: (c) => c.commitQuery(),
       expect: () => [
-        isA<SearchState>().having(
-          (s) => s.recentQueries,
-          'recentQueries',
-          ['TIP', 'percent', 'bmi'],
-        ),
+        isA<SearchState>().having((s) => s.recentQueries, 'recentQueries', [
+          'TIP',
+          'percent',
+          'bmi',
+        ]),
       ],
     );
 
     blocTest<SearchCubit, SearchState>(
       'commitQuery with blank query is a no-op',
       build: () => SearchCubit(recents: repo()),
-      seed: () => const SearchState.initial().copyWith(
-        status: SearchStatus.ready,
-      ),
+      seed: () =>
+          const SearchState.initial().copyWith(status: SearchStatus.ready),
       act: (c) => c.commitQuery(),
       expect: () => <SearchState>[],
     );
@@ -160,11 +154,10 @@ void main() {
       ),
       act: (c) => c.removeRecent('b'),
       expect: () => [
-        isA<SearchState>().having(
-          (s) => s.recentQueries,
-          'recentQueries',
-          ['a', 'c'],
-        ),
+        isA<SearchState>().having((s) => s.recentQueries, 'recentQueries', [
+          'a',
+          'c',
+        ]),
       ],
       verify: (_) async {
         expect(prefs.getStringList('search.recents.v1'), ['a', 'c']);
@@ -175,10 +168,7 @@ void main() {
       'commitQuery caps the recents list at maxRecents',
       setUp: () async {
         // Seed the store so push() sees the existing entries and caps them.
-        await prefs.setStringList(
-          'search.recents.v1',
-          const ['old1', 'old2'],
-        );
+        await prefs.setStringList('search.recents.v1', const ['old1', 'old2']);
       },
       build: () => SearchCubit(recents: repo(maxRecents: 2)),
       seed: () => const SearchState(
@@ -189,11 +179,10 @@ void main() {
       ),
       act: (c) => c.commitQuery(),
       expect: () => [
-        isA<SearchState>().having(
-          (s) => s.recentQueries,
-          'recentQueries',
-          ['new', 'old1'],
-        ),
+        isA<SearchState>().having((s) => s.recentQueries, 'recentQueries', [
+          'new',
+          'old1',
+        ]),
       ],
     );
   });

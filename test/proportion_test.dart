@@ -15,27 +15,21 @@ void main() {
     final compute = proportionDefinition.compute;
 
     test('solves the proportion D = B*C/A', () async {
-      final result = await compute({
-        'a': '3',
-        'b': '12',
-        'c': '5',
-      }).run();
+      final result = await compute({'a': '3', 'b': '12', 'c': '5'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(20.0, 1e-09));
     });
 
     test('fails when a is zero', () async {
-      final result = await compute({
-        'a': '0',
-        'b': '12',
-        'c': '5',
-      }).run();
-      expect(result.isLeft(), isTrue,
-          reason: 'expected failure for a=0, b=12, c=5');
+      final result = await compute({'a': '0', 'b': '12', 'c': '5'}).run();
+      expect(
+        result.isLeft(),
+        isTrue,
+        reason: 'expected failure for a=0, b=12, c=5',
+      );
     });
-
   });
 }

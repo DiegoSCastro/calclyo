@@ -8,9 +8,11 @@ import 'package:calclyo/src/shell/view/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+/// AppRouter.
 class AppRouter {
   const AppRouter._();
 
+  /// Documented member.
   static final config = GoRouter(
     initialLocation: '/',
     routes: [

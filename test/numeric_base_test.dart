@@ -15,28 +15,21 @@ void main() {
     final compute = numericBaseDefinition.compute;
 
     test('255 dec → ff hex', () async {
-      final result = await compute({
-        'v': '255',
-        'dir': 'Dec → Hex',
-      }).run();
+      final result = await compute({'v': '255', 'dir': 'Dec → Hex'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, 255.0);
     });
 
     test('ff hex → 255 dec', () async {
-      final result = await compute({
-        'v': 'FF',
-        'dir': 'Hex → Dec',
-      }).run();
+      final result = await compute({'v': 'FF', 'dir': 'Hex → Dec'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, 255.0);
     });
-
   });
 }

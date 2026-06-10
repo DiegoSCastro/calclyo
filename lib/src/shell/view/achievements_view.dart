@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 /// Placeholder for the Achievements screen. Real implementation lands in
 /// t_5c46fe43. v0.2 only needs the route to resolve to a visible screen.
 class AchievementsView extends StatelessWidget {
+  /// Creates [AchievementsView].
   const AchievementsView({super.key});
 
   @override

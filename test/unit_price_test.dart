@@ -14,26 +14,22 @@ void main() {
   group('unitPriceDefinition.compute', () {
     final compute = unitPriceDefinition.compute;
 
-    test('\\\$9.99 / 3 ~ 3.33', () async {
-      final result = await compute({
-        'price': '9.99',
-        'units': '3',
-      }).run();
+    test(r'\$9.99 / 3 ~ 3.33', () async {
+      final result = await compute({'price': '9.99', 'units': '3'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(3.33, 0.01));
     });
 
     test('fails when units = 0', () async {
-      final result = await compute({
-        'price': '10',
-        'units': '0',
-      }).run();
-      expect(result.isLeft(), isTrue,
-          reason: 'expected failure for price=10, units=0');
+      final result = await compute({'price': '10', 'units': '0'}).run();
+      expect(
+        result.isLeft(),
+        isTrue,
+        reason: 'expected failure for price=10, units=0',
+      );
     });
-
   });
 }

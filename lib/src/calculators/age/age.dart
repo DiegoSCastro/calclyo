@@ -51,38 +51,36 @@ _Age _ageBetween(DateTime dob, DateTime ref) {
 TaskEither<CalculatorFailure, CalculatorResult> _compute(
   Map<String, String> values,
 ) {
-  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(
-    () async {
-      final dobRaw = (values['dob'] ?? '').trim();
-      final refRaw = (values['ref'] ?? '').trim();
-      if (dobRaw.isEmpty || refRaw.isEmpty) {
-        throw const CalculatorFailure('Both dates are required');
-      }
-      final dob = DateTime.tryParse(dobRaw);
-      final ref = DateTime.tryParse(refRaw);
-      if (dob == null) {
-        throw CalculatorFailure('Invalid DOB: "$dobRaw" (use YYYY-MM-DD)');
-      }
-      if (ref == null) {
-        throw CalculatorFailure('Invalid reference date: "$refRaw"');
-      }
-      final age = _ageBetween(dob, ref);
-      final totalDays = ref.difference(dob).inDays;
-      return CalculatorResult(
-        primary: age.years.toDouble(),
-        primaryLabel: 'Age',
-        steps: [
-          'DOB: $dobRaw',
-          'Reference: $refRaw',
-          'Age: ${age.years} years, ${age.months} months, ${age.days} days',
-          'Total days: $totalDays',
-        ],
-      );
-    },
-    (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()),
-  );
+  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(() async {
+    final dobRaw = (values['dob'] ?? '').trim();
+    final refRaw = (values['ref'] ?? '').trim();
+    if (dobRaw.isEmpty || refRaw.isEmpty) {
+      throw const CalculatorFailure('Both dates are required');
+    }
+    final dob = DateTime.tryParse(dobRaw);
+    final ref = DateTime.tryParse(refRaw);
+    if (dob == null) {
+      throw CalculatorFailure('Invalid DOB: "$dobRaw" (use YYYY-MM-DD)');
+    }
+    if (ref == null) {
+      throw CalculatorFailure('Invalid reference date: "$refRaw"');
+    }
+    final age = _ageBetween(dob, ref);
+    final totalDays = ref.difference(dob).inDays;
+    return CalculatorResult(
+      primary: age.years.toDouble(),
+      primaryLabel: 'Age',
+      steps: [
+        'DOB: $dobRaw',
+        'Reference: $refRaw',
+        'Age: ${age.years} years, ${age.months} months, ${age.days} days',
+        'Total days: $totalDays',
+      ],
+    );
+  }, (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()));
 }
 
+/// Registry entry for the age calculator.
 const ageDefinition = CalculatorDefinition(
   id: 'age',
   name: 'Age',

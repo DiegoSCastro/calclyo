@@ -1,12 +1,12 @@
+import 'package:calclyo/src/features/history/history_entry.dart';
+import 'package:calclyo/src/features/history/history_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 
-import 'package:calclyo/src/features/history/history_entry.dart';
-import 'package:calclyo/src/features/history/history_repository.dart';
-
 /// State of the history screen.
 class HistoryState extends Equatable {
+  /// Creates [HistoryState].
   const HistoryState({
     this.entries = const [],
     this.isLoading = false,
@@ -22,6 +22,7 @@ class HistoryState extends Equatable {
   /// Last user-facing error (e.g. failed to read disk). Null on success.
   final String? error;
 
+  /// copyWith.
   HistoryState copyWith({
     List<HistoryEntry>? entries,
     bool? isLoading,
@@ -43,6 +44,7 @@ class HistoryState extends Equatable {
 /// Cubit for the History screen. Pure passthrough over [HistoryRepository]
 /// so the screen only renders state.
 class HistoryCubit extends Cubit<HistoryState> {
+  /// Creates a cubit backed by the given repository.
   HistoryCubit(this._repository) : super(const HistoryState());
 
   final HistoryRepository _repository;
@@ -52,12 +54,10 @@ class HistoryCubit extends Cubit<HistoryState> {
     emit(state.copyWith(isLoading: true, error: null));
     final result = await _repository.load().run();
     result.fold(
-      (failure) => emit(
-        state.copyWith(isLoading: false, error: failure.message),
-      ),
-      (list) => emit(
-        state.copyWith(entries: list, isLoading: false, error: null),
-      ),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, error: failure.message)),
+      (list) =>
+          emit(state.copyWith(entries: list, isLoading: false, error: null)),
     );
   }
 
@@ -85,6 +85,5 @@ class HistoryCubit extends Cubit<HistoryState> {
   /// monadic flow (e.g. tests).
   TaskEither<HistoryFailure, List<HistoryEntry>> recordTask(
     HistoryEntry entry,
-  ) =>
-      _repository.add(entry);
+  ) => _repository.add(entry);
 }

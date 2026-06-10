@@ -21,7 +21,7 @@ void main() {
       }).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, 26.0);
     });
@@ -31,9 +31,11 @@ void main() {
         'dob': 'not-a-date',
         'ref': '2026-06-10',
       }).run();
-      expect(result.isLeft(), isTrue,
-          reason: 'expected failure for dob=not-a-date, ref=2026-06-10');
+      expect(
+        result.isLeft(),
+        isTrue,
+        reason: 'expected failure for dob=not-a-date, ref=2026-06-10',
+      );
     });
-
   });
 }

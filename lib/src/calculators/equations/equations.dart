@@ -1,15 +1,25 @@
 import 'dart:math' as math;
 
 import 'package:calclyo/src/calculators/_widgets.dart';
+import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
+    show parseField;
 import 'package:calclyo/src/core/calculator.dart';
 import 'package:calclyo/src/core/categories.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 
-import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
-    show parseField;
+/// EquationKind values.
+/// Equation kinds.
+enum EquationKind {
+  /// Linear equation.
+  linear,
 
-enum EquationKind { linear, quadratic, system2x2 }
+  /// Quadratic equation.
+  quadratic,
+
+  /// 2×2 linear system.
+  system2x2,
+}
 
 const _kindKey = 'kind';
 const _kindLinear = 'Linear (ax + b = c)';
@@ -64,8 +74,7 @@ CalculatorResult _solve(Map<String, String> values) {
           'Linear: a·x + b = c',
           'Given: a=$a, b=$b, c=$c',
           'Formula: x = (c − b) / a',
-          '= (${c.toStringAsFixed(2)} − ${b.toStringAsFixed(2)}) / '
-              '${a.toStringAsFixed(2)}',
+          '= (${c.toStringAsFixed(2)} − ${b.toStringAsFixed(2)}) / ${a.toStringAsFixed(2)}',
           'x = ${x.toStringAsFixed(6)}',
         ],
       );
@@ -84,17 +93,17 @@ CalculatorResult _solve(Map<String, String> values) {
       final x1 = (-b + sqrtD) / (2 * a);
       final x2 = (-b - sqrtD) / (2 * a);
       final primary = disc == 0 ? x1 : math.max(x1.abs(), x2.abs());
+      final discriminantStep = 'Discriminant: Δ = b² − 4ac = '
+          '${b.toStringAsFixed(2)}² − 4·${a.toStringAsFixed(2)}·'
+          '${c.toStringAsFixed(2)} = ${disc.toStringAsFixed(4)}';
       return CalculatorResult(
         primary: primary,
         primaryLabel: disc == 0 ? 'x' : '|x|',
         steps: [
           'Quadratic: a·x² + b·x + c = 0',
           'Given: a=$a, b=$b, c=$c',
-          'Discriminant: Δ = b² − 4ac = '
-              '${b.toStringAsFixed(2)}² − 4·${a.toStringAsFixed(2)}·'
-              '${c.toStringAsFixed(2)} = ${disc.toStringAsFixed(4)}',
-          if (disc == 0) 'Δ = 0 → one real root'
-          else 'Δ > 0 → two real roots',
+          discriminantStep,
+          if (disc == 0) 'Δ = 0 → one real root' else 'Δ > 0 → two real roots',
           'x = (−b ± √Δ) / 2a',
           'x₁ = ${x1.toStringAsFixed(6)}',
           'x₂ = ${x2.toStringAsFixed(6)}',
@@ -113,18 +122,21 @@ CalculatorResult _solve(Map<String, String> values) {
       }
       final x = (c * e - b * f) / det;
       final y = (a * f - c * d) / det;
+      final eq1 = '  ${a.toStringAsFixed(2)}x + ${b.toStringAsFixed(2)}y = '
+          '${c.toStringAsFixed(2)}';
+      final eq2 = '  ${d.toStringAsFixed(2)}x + ${e.toStringAsFixed(2)}y = '
+          '${f.toStringAsFixed(2)}';
+      final detStep = 'Determinant: D = a·e − b·d = '
+          '${(a * e).toStringAsFixed(4)} − ${(b * d).toStringAsFixed(4)} '
+          '= ${det.toStringAsFixed(4)}';
       return CalculatorResult(
         primary: x,
         primaryLabel: 'x',
         steps: [
           '2×2 system:',
-          '  ${a.toStringAsFixed(2)}x + ${b.toStringAsFixed(2)}y = '
-              '${c.toStringAsFixed(2)}',
-          '  ${d.toStringAsFixed(2)}x + ${e.toStringAsFixed(2)}y = '
-              '${f.toStringAsFixed(2)}',
-          'Determinant: D = a·e − b·d = '
-              '${(a * e).toStringAsFixed(4)} − ${(b * d).toStringAsFixed(4)} '
-              '= ${det.toStringAsFixed(4)}',
+          eq1,
+          eq2,
+          detStep,
           'x = (c·e − b·f) / D = ${x.toStringAsFixed(6)}',
           'y = (a·f − c·d) / D = ${y.toStringAsFixed(6)}',
         ],
@@ -134,6 +146,7 @@ CalculatorResult _solve(Map<String, String> values) {
   }
 }
 
+/// Registry entry for the equations calculator.
 const equationsDefinition = CalculatorDefinition(
   id: 'equations',
   name: 'Equations',

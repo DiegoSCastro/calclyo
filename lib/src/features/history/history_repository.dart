@@ -2,15 +2,17 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:calclyo/src/features/history/history_entry.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:calclyo/src/features/history/history_entry.dart';
 
 /// Failure emitted by the persistence layer. Messages are user-facing so
 /// the cubit can surface them in a snackbar if needed.
 class HistoryFailure implements Exception {
+  /// Creates [HistoryFailure].
   const HistoryFailure(this.message);
+
+  /// message.
   final String message;
 
   @override
@@ -44,10 +46,12 @@ abstract class HistoryRepository {
 
 /// Production [HistoryRepository] backed by [SharedPreferences].
 ///
-/// The whole list is serialised as a single JSON array under [storageKey].
+/// The whole list is serialised as a single JSON array under
+/// [HistoryRepository.storageKey].
 /// That's fine for 50 entries (≈ a few KB) and avoids the cost of
 /// encoding/decoding each row on every read.
 class SharedPreferencesHistoryRepository implements HistoryRepository {
+  /// Creates a repository backed by the given preferences store.
   SharedPreferencesHistoryRepository(this._prefs);
 
   final SharedPreferences _prefs;
@@ -96,9 +100,7 @@ class SharedPreferencesHistoryRepository implements HistoryRepository {
           return List<HistoryEntry>.unmodifiable(next);
         },
         (error, _) => HistoryFailure(
-          error is HistoryFailure
-              ? error.message
-              : 'Failed to save history',
+          error is HistoryFailure ? error.message : 'Failed to save history',
         ),
       );
     });
@@ -119,8 +121,7 @@ class SharedPreferencesHistoryRepository implements HistoryRepository {
 
   Future<void> _writeAll(List<HistoryEntry> entries) async {
     final encoded = jsonEncode(entries.map((e) => e.toJson()).toList());
-    final ok =
-        await _prefs.setString(HistoryRepository.storageKey, encoded);
+    final ok = await _prefs.setString(HistoryRepository.storageKey, encoded);
     if (!ok) {
       throw const HistoryFailure('Could not write history to disk');
     }
@@ -130,14 +131,14 @@ class SharedPreferencesHistoryRepository implements HistoryRepository {
 /// Tiny id generator for new history entries. Avoids pulling in `uuid`
 /// just for this — 32 hex chars are unique enough for a 50-entry cap.
 class HistoryIdGenerator {
+  /// Creates a generator, optionally seeded with [random].
   HistoryIdGenerator({Random? random}) : _random = random ?? Random();
 
   final Random _random;
 
+  /// next.
   String next() {
     final values = List<int>.generate(16, (_) => _random.nextInt(256));
-    return values
-        .map((b) => b.toRadixString(16).padLeft(2, '0'))
-        .join();
+    return values.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
   }
 }

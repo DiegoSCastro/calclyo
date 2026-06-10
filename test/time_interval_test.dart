@@ -15,25 +15,21 @@ void main() {
     final compute = timeIntervalDefinition.compute;
 
     test('09:15 → 17:45 = 8.5h', () async {
-      final result = await compute({
-        'a': '09:15',
-        'b': '17:45',
-      }).run();
+      final result = await compute({'a': '09:15', 'b': '17:45'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(8.5, 1e-06));
     });
 
     test('fails on bad time', () async {
-      final result = await compute({
-        'a': 'not-a-time',
-        'b': '17:45',
-      }).run();
-      expect(result.isLeft(), isTrue,
-          reason: 'expected failure for a=not-a-time, b=17:45');
+      final result = await compute({'a': 'not-a-time', 'b': '17:45'}).run();
+      expect(
+        result.isLeft(),
+        isTrue,
+        reason: 'expected failure for a=not-a-time, b=17:45',
+      );
     });
-
   });
 }

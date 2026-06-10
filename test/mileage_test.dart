@@ -22,7 +22,7 @@ void main() {
       }).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(12.5, 1e-06));
     });
@@ -33,9 +33,11 @@ void main() {
         'l': '0',
         'price': '1.50',
       }).run();
-      expect(result.isLeft(), isTrue,
-          reason: 'expected failure for km=500, l=0, price=1.50');
+      expect(
+        result.isLeft(),
+        isTrue,
+        reason: 'expected failure for km=500, l=0, price=1.50',
+      );
     });
-
   });
 }

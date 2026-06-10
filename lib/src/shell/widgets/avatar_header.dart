@@ -1,3 +1,4 @@
+import 'package:calclyo/src/shell/app_shell.dart' show AppShell;
 import 'package:flutter/material.dart';
 
 /// Top-left avatar + "Sign in" stub shown in the [AppShell] app bar.
@@ -5,11 +6,8 @@ import 'package:flutter/material.dart';
 /// Real auth lands post-MVP. For v0.2 the widget is visible, sized, and
 /// labelled for accessibility, but tapping it is a no-op.
 class AvatarHeader extends StatelessWidget {
-  const AvatarHeader({
-    required this.initials,
-    this.onTap,
-    super.key,
-  });
+  /// Creates [AvatarHeader].
+  const AvatarHeader({required this.initials, this.onTap, super.key});
 
   /// One or two letters rendered inside the circle.
   final String initials;

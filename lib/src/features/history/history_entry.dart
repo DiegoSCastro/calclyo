@@ -1,3 +1,5 @@
+import 'package:calclyo/src/core/calculator.dart'
+    show CalculatorControl, CalculatorInputField;
 import 'package:equatable/equatable.dart';
 
 /// One persisted record of a successful calculator run.
@@ -7,6 +9,7 @@ import 'package:equatable/equatable.dart';
 /// re-runs reproduce exactly what the user submitted (numeric, date, text
 /// inputs all share the same shape).
 class HistoryEntry extends Equatable {
+  /// Creates [HistoryEntry].
   const HistoryEntry({
     required this.id,
     required this.calculatorId,
@@ -34,6 +37,7 @@ class HistoryEntry extends Equatable {
   /// When the calculation ran, in ISO 8601 UTC.
   final DateTime timestamp;
 
+  /// copyWith.
   HistoryEntry copyWith({
     String? id,
     String? calculatorId,
@@ -50,13 +54,14 @@ class HistoryEntry extends Equatable {
     );
   }
 
+  /// toJson.
   Map<String, Object?> toJson() => {
-        'id': id,
-        'calculatorId': calculatorId,
-        'inputs': inputs,
-        'result': result,
-        'timestamp': timestamp.toUtc().toIso8601String(),
-      };
+    'id': id,
+    'calculatorId': calculatorId,
+    'inputs': inputs,
+    'result': result,
+    'timestamp': timestamp.toUtc().toIso8601String(),
+  };
 
   /// Decode a single entry. Returns `null` for malformed rows so the
   /// repository can drop them silently rather than crash the whole list.

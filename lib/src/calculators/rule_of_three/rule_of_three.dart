@@ -5,7 +5,14 @@ import 'package:fpdart/fpdart.dart';
 
 /// Mode toggle exposed by the Rule of Three. Kept here (not in core) because
 /// it's a calculator-specific concern.
-enum RuleOfThreeKind { direct, inverse }
+/// Rule-of-three kinds.
+enum RuleOfThreeKind {
+  /// Direct proportion.
+  direct,
+
+  /// Inverse proportion.
+  inverse,
+}
 
 const _kindKey = 'kind';
 const _kindDirect = 'Direct';
@@ -18,20 +25,13 @@ const _ruleOfThreeInputSchema = CalculatorInputSchema(
     CalculatorInputField(key: 'c', label: 'c', defaultValue: '7'),
   ],
   controls: [
-    SegmentedToggleControl(
-      key: _kindKey,
-      options: [_kindDirect, _kindInverse],
-    ),
+    SegmentedToggleControl(key: _kindKey, options: [_kindDirect, _kindInverse]),
   ],
 );
 
 /// Parse a numeric form field, returning a [CalculatorFailure] for blank or
 /// non-numeric input. Kept here so each calculator doesn't reinvent it.
-double parseField(
-  String raw, {
-  required String key,
-  bool allowZero = true,
-}) {
+double parseField(String raw, {required String key, bool allowZero = true}) {
   final trimmed = raw.trim();
   if (trimmed.isEmpty) {
     throw CalculatorFailure('"$key" is required');
@@ -88,11 +88,7 @@ CalculatorResult _solve(double a, double b, double c, String kindRaw) {
     'Computation: x = ${x.toStringAsFixed(6)}',
   ];
 
-  return CalculatorResult(
-    primary: x,
-    primaryLabel: 'x',
-    steps: steps,
-  );
+  return CalculatorResult(primary: x, primaryLabel: 'x', steps: steps);
 }
 
 /// The Rule of Three calculator, exposed as a single [CalculatorDefinition].
@@ -115,10 +111,7 @@ const ruleOfThreeDefinition = CalculatorDefinition(
 
 /// Default step renderer — a card showing the primary value and the step
 /// list. Used unless the calculator overrides it for a specialised layout.
-Widget _ruleOfThreeStepRenderer(
-  BuildContext context,
-  CalculatorResult result,
-) {
+Widget _ruleOfThreeStepRenderer(BuildContext context, CalculatorResult result) {
   final theme = Theme.of(context);
   return Card(
     child: Padding(

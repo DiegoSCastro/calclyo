@@ -15,28 +15,21 @@ void main() {
     final compute = gcfLcmDefinition.compute;
 
     test('computes GCD(12, 18) = 6', () async {
-      final result = await compute({
-        'a': '12',
-        'b': '18',
-      }).run();
+      final result = await compute({'a': '12', 'b': '18'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(6.0, 1e-09));
     });
 
     test('computes GCD(100, 75) = 25', () async {
-      final result = await compute({
-        'a': '100',
-        'b': '75',
-      }).run();
+      final result = await compute({'a': '100', 'b': '75'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(25.0, 1e-09));
     });
-
   });
 }

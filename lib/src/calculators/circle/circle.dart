@@ -1,15 +1,25 @@
 import 'dart:math' as math;
 
 import 'package:calclyo/src/calculators/_widgets.dart';
+import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
+    show parseField;
 import 'package:calclyo/src/core/calculator.dart';
 import 'package:calclyo/src/core/categories.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 
-import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
-    show parseField;
+/// CircleMode values.
+/// Circle input modes.
+enum CircleMode {
+  /// From radius.
+  fromRadius,
 
-enum CircleMode { fromRadius, fromDiameter, fromCircumference }
+  /// From diameter.
+  fromDiameter,
+
+  /// From circumference.
+  fromCircumference,
+}
 
 const _modeKey = 'mode';
 const _modeRadius = 'Radius';
@@ -17,9 +27,7 @@ const _modeDiameter = 'Diameter';
 const _modeCircumference = 'Circumference';
 
 const _circleInputSchema = CalculatorInputSchema(
-  fields: [
-    CalculatorInputField(key: 'v', label: 'value', defaultValue: '5'),
-  ],
+  fields: [CalculatorInputField(key: 'v', label: 'value', defaultValue: '5')],
   controls: [
     SegmentedToggleControl(
       key: _modeKey,
@@ -31,33 +39,31 @@ const _circleInputSchema = CalculatorInputSchema(
 TaskEither<CalculatorFailure, CalculatorResult> _compute(
   Map<String, String> values,
 ) {
-  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(
-    () async {
-      final v = parseField(values['v'] ?? '', key: 'value', allowZero: false);
-      final mode = values[_modeKey] ?? _modeRadius;
-      final r = switch (mode) {
-        _modeRadius => v,
-        _modeDiameter => v / 2,
-        _modeCircumference => v / (2 * math.pi),
-        _ => v,
-      };
-      final area = math.pi * r * r;
-      final circumference = 2 * math.pi * r;
-      return CalculatorResult(
-        primary: area,
-        primaryLabel: 'Area',
-        steps: [
-          'Mode: $mode, value = $v',
-          'Radius r = ${r.toStringAsFixed(6)}',
-          'Area = π r² = ${area.toStringAsFixed(6)}',
-          'Circumference = 2π r = ${circumference.toStringAsFixed(6)}',
-        ],
-      );
-    },
-    (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()),
-  );
+  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(() async {
+    final v = parseField(values['v'] ?? '', key: 'value', allowZero: false);
+    final mode = values[_modeKey] ?? _modeRadius;
+    final r = switch (mode) {
+      _modeRadius => v,
+      _modeDiameter => v / 2,
+      _modeCircumference => v / (2 * math.pi),
+      _ => v,
+    };
+    final area = math.pi * r * r;
+    final circumference = 2 * math.pi * r;
+    return CalculatorResult(
+      primary: area,
+      primaryLabel: 'Area',
+      steps: [
+        'Mode: $mode, value = $v',
+        'Radius r = ${r.toStringAsFixed(6)}',
+        'Area = π r² = ${area.toStringAsFixed(6)}',
+        'Circumference = 2π r = ${circumference.toStringAsFixed(6)}',
+      ],
+    );
+  }, (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()));
 }
 
+/// Registry entry for the circle calculator.
 const circleDefinition = CalculatorDefinition(
   id: 'circle',
   name: 'Circle',

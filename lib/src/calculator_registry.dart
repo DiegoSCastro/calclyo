@@ -117,4 +117,4 @@ const calculators = <CalculatorDefinition>[
 ];
 
 /// The app's [CategoryRegistry], pre-populated with [calculators].
-final calculatorRegistry = CategoryRegistry(calculators);
+const calculatorRegistry = CategoryRegistry(calculators);

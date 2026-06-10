@@ -1,19 +1,33 @@
-import 'package:equatable/equatable.dart';
-
 import 'package:calclyo/src/core/calculator.dart';
+import 'package:equatable/equatable.dart';
 
 /// Domain id of a calculator category.
 ///
 /// Declaration order is meaningful: [CategoryRegistry] emits groups in
 /// this order, so the home screen lists Algebra first, Science last.
 enum CalculatorCategoryId {
+  /// algebra.
   algebra,
+
+  /// geometry.
   geometry,
+
+  /// converter.
   converter,
+
+  /// lifestyle.
   lifestyle,
+
+  /// finance.
   finance,
+
+  /// health.
   health,
+
+  /// dateTime.
   dateTime,
+
+  /// science.
   science,
 }
 
@@ -21,6 +35,7 @@ enum CalculatorCategoryId {
 /// parent tile. The list of calculators that belong to it is looked up from
 /// the [CategoryRegistry] at render time.
 class CalculatorCategory extends Equatable {
+  /// Creates [CalculatorCategory].
   const CalculatorCategory({
     required this.id,
     required this.name,
@@ -28,9 +43,16 @@ class CalculatorCategory extends Equatable {
     required this.description,
   });
 
+  /// id.
   final CalculatorCategoryId id;
+
+  /// name.
   final String name;
+
+  /// iconCodePoint.
   final int iconCodePoint;
+
+  /// description.
   final String description;
 
   @override
@@ -39,12 +61,16 @@ class CalculatorCategory extends Equatable {
 
 /// Pair of a [CalculatorCategory] with the calculators that belong to it.
 class CalculatorCategoryWithCalculators extends Equatable {
+  /// Creates [CalculatorCategoryWithCalculators].
   const CalculatorCategoryWithCalculators({
     required this.category,
     required this.calculators,
   });
 
+  /// category.
   final CalculatorCategory category;
+
+  /// calculators.
   final List<CalculatorDefinition> calculators;
 
   @override
@@ -58,6 +84,7 @@ class CalculatorCategoryWithCalculators extends Equatable {
 /// router and the category list view read from here — there is no separate
 /// per-calculator route registration step.
 class CategoryRegistry {
+  /// Creates [CategoryRegistry].
   const CategoryRegistry(this._calculators);
 
   /// Build a registry from a literal list of calculator definitions. Most

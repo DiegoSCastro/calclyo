@@ -15,28 +15,21 @@ void main() {
     final compute = energyDefinition.compute;
 
     test('1 kJ = 1000 J', () async {
-      final result = await compute({
-        'v': '1',
-        'unit': 'kJ',
-      }).run();
+      final result = await compute({'v': '1', 'unit': 'kJ'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(1000.0, 1e-06));
     });
 
     test('1 kcal = 4184 J', () async {
-      final result = await compute({
-        'v': '1',
-        'unit': 'kcal',
-      }).run();
+      final result = await compute({'v': '1', 'unit': 'kcal'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(4184.0, 1e-06));
     });
-
   });
 }

@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 /// Replaces the v0.1 `CategoryListView`. The router points `/` at this
 /// widget directly.
 class AppShell extends StatelessWidget {
+  /// Creates [AppShell].
   const AppShell({super.key});
 
   /// v0.2: the primary FAB always quick-launches the Rule of Three.

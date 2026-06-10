@@ -13,7 +13,7 @@ void main() {
   group('percentageDefinition.compute', () {
     final compute = percentageDefinition.compute;
 
-    test("computes 10% of 200 = 20", () async {
+    test('computes 10% of 200 = 20', () async {
       final result = await compute({
         'a': '10',
         'b': '200',
@@ -25,7 +25,7 @@ void main() {
       expect(v.primary, closeTo(20, 1e-9));
     });
 
-    test("computes 50 is what % of 200 = 25", () async {
+    test('computes 50 is what % of 200 = 25', () async {
       final result = await compute({
         'a': '50',
         'b': '200',
@@ -37,7 +37,7 @@ void main() {
       expect(v.primary, closeTo(25, 1e-9));
     });
 
-    test("computes 100 → 150 percent change = 50%", () async {
+    test('computes 100 → 150 percent change = 50%', () async {
       final result = await compute({
         'a': '100',
         'b': '150',

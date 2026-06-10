@@ -1,16 +1,13 @@
 import 'package:calclyo/src/calculators/_widgets.dart';
+import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
+    show parseField;
 import 'package:calclyo/src/core/calculator.dart';
 import 'package:calclyo/src/core/categories.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 
-import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
-    show parseField;
-
 const _forceInputSchema = CalculatorInputSchema(
-  fields: [
-    CalculatorInputField(key: 'v', label: 'value', defaultValue: '100'),
-  ],
+  fields: [CalculatorInputField(key: 'v', label: 'value', defaultValue: '100')],
   controls: [
     SegmentedToggleControl(
       key: 'unit',
@@ -31,26 +28,24 @@ const _toNewtons = <String, double>{
 TaskEither<CalculatorFailure, CalculatorResult> _compute(
   Map<String, String> values,
 ) {
-  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(
-    () async {
-      final v = parseField(values['v'] ?? '', key: 'value');
-      final u = values['unit'] ?? 'N';
-      final n = v * (_toNewtons[u] ?? 1);
-      final lines = <String>['$v $u = ${n.toStringAsFixed(4)} N'];
-      for (final entry in _toNewtons.entries) {
-        if (entry.key == u) continue;
-        lines.add('  = ${(n / entry.value).toStringAsFixed(6)} ${entry.key}');
-      }
-      return CalculatorResult(
-        primary: n,
-        primaryLabel: '$v $u in N',
-        steps: lines,
-      );
-    },
-    (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()),
-  );
+  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(() async {
+    final v = parseField(values['v'] ?? '', key: 'value');
+    final u = values['unit'] ?? 'N';
+    final n = v * (_toNewtons[u] ?? 1);
+    final lines = <String>['$v $u = ${n.toStringAsFixed(4)} N'];
+    for (final entry in _toNewtons.entries) {
+      if (entry.key == u) continue;
+      lines.add('  = ${(n / entry.value).toStringAsFixed(6)} ${entry.key}');
+    }
+    return CalculatorResult(
+      primary: n,
+      primaryLabel: '$v $u in N',
+      steps: lines,
+    );
+  }, (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()));
 }
 
+/// Registry entry for the force calculator.
 const forceDefinition = CalculatorDefinition(
   id: 'force',
   name: 'Force',

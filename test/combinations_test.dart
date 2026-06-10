@@ -15,28 +15,21 @@ void main() {
     final compute = combinationsDefinition.compute;
 
     test('C(10, 3) = 120', () async {
-      final result = await compute({
-        'n': '10',
-        'r': '3',
-      }).run();
+      final result = await compute({'n': '10', 'r': '3'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(120.0, 1e-09));
     });
 
     test('C(5, 0) = 1', () async {
-      final result = await compute({
-        'n': '5',
-        'r': '0',
-      }).run();
+      final result = await compute({'n': '5', 'r': '0'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(1.0, 1e-09));
     });
-
   });
 }

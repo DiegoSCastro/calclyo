@@ -14,29 +14,22 @@ void main() {
   group('salesTaxDefinition.compute', () {
     final compute = salesTaxDefinition.compute;
 
-    test('\\\$100 at 8.5% → \\\$108.50', () async {
-      final result = await compute({
-        'price': '100',
-        'rate': '8.5',
-      }).run();
+    test(r'\$100 at 8.5% → \$108.50', () async {
+      final result = await compute({'price': '100', 'rate': '8.5'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(108.5, 1e-06));
     });
 
-    test('\\\$0 at 10% → 0', () async {
-      final result = await compute({
-        'price': '0',
-        'rate': '10',
-      }).run();
+    test(r'\$0 at 10% → 0', () async {
+      final result = await compute({'price': '0', 'rate': '10'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(0.0, 1e-06));
     });
-
   });
 }

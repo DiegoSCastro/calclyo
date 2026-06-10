@@ -1,11 +1,10 @@
 import 'package:calclyo/src/calculators/_widgets.dart';
+import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
+    show parseField;
 import 'package:calclyo/src/core/calculator.dart';
 import 'package:calclyo/src/core/categories.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
-
-import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
-    show parseField;
 
 const _accelerationInputSchema = CalculatorInputSchema(
   fields: [
@@ -30,26 +29,24 @@ const _toMps2 = <String, double>{
 TaskEither<CalculatorFailure, CalculatorResult> _compute(
   Map<String, String> values,
 ) {
-  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(
-    () async {
-      final v = parseField(values['v'] ?? '', key: 'value');
-      final u = values['unit'] ?? 'm/s²';
-      final mps2 = v * (_toMps2[u] ?? 1);
-      final lines = <String>['$v $u = ${mps2.toStringAsFixed(4)} m/s²'];
-      for (final entry in _toMps2.entries) {
-        if (entry.key == u) continue;
-        lines.add('  = ${(mps2 / entry.value).toStringAsFixed(6)} ${entry.key}');
-      }
-      return CalculatorResult(
-        primary: mps2,
-        primaryLabel: '$v $u in m/s²',
-        steps: lines,
-      );
-    },
-    (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()),
-  );
+  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(() async {
+    final v = parseField(values['v'] ?? '', key: 'value');
+    final u = values['unit'] ?? 'm/s²';
+    final mps2 = v * (_toMps2[u] ?? 1);
+    final lines = <String>['$v $u = ${mps2.toStringAsFixed(4)} m/s²'];
+    for (final entry in _toMps2.entries) {
+      if (entry.key == u) continue;
+      lines.add('  = ${(mps2 / entry.value).toStringAsFixed(6)} ${entry.key}');
+    }
+    return CalculatorResult(
+      primary: mps2,
+      primaryLabel: '$v $u in m/s²',
+      steps: lines,
+    );
+  }, (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()));
 }
 
+/// Registry entry for the acceleration calculator.
 const accelerationDefinition = CalculatorDefinition(
   id: 'acceleration',
   name: 'Acceleration',

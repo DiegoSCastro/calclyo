@@ -1,19 +1,26 @@
+import 'package:calclyo/src/calculators/bmi/bmi.dart' show healthRenderer;
+import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
+    show parseField;
 import 'package:calclyo/src/core/calculator.dart';
 import 'package:calclyo/src/core/categories.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 
-import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
-    show parseField;
-import 'package:calclyo/src/calculators/bmi/bmi.dart' show healthRenderer;
-
 const _caloricInputSchema = CalculatorInputSchema(
   fields: [
-    CalculatorInputField(key: 'gender', label: 'gender (0=female, 1=male)', defaultValue: '1'),
+    CalculatorInputField(
+      key: 'gender',
+      label: 'gender (0=female, 1=male)',
+      defaultValue: '1',
+    ),
     CalculatorInputField(key: 'age', label: 'age (years)', defaultValue: '30'),
     CalculatorInputField(key: 'h', label: 'height (cm)', defaultValue: '175'),
     CalculatorInputField(key: 'w', label: 'weight (kg)', defaultValue: '70'),
-    CalculatorInputField(key: 'act', label: 'activity (1-5)', defaultValue: '3'),
+    CalculatorInputField(
+      key: 'act',
+      label: 'activity (1-5)',
+      defaultValue: '3',
+    ),
   ],
 );
 
@@ -36,39 +43,37 @@ const _activityLabels = <String, String>{
 TaskEither<CalculatorFailure, CalculatorResult> _compute(
   Map<String, String> values,
 ) {
-  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(
-    () async {
-      final g = parseField(values['gender'] ?? '', key: 'gender').round();
-      final age = parseField(values['age'] ?? '', key: 'age');
-      final h = parseField(values['h'] ?? '', key: 'height');
-      final w = parseField(values['w'] ?? '', key: 'weight');
-      final a = parseField(values['act'] ?? '', key: 'activity').round();
-      // Harris-Benedict (revised 1984).
-      double bmr;
-      if (g == 1) {
-        bmr = 88.362 + 13.397 * w + 4.799 * h - 5.677 * age;
-      } else {
-        bmr = 447.593 + 9.247 * w + 3.098 * h - 4.330 * age;
-      }
-      final factor = _activityFactors['$a'] ?? 1.2;
-      final tdee = bmr * factor;
-      return CalculatorResult(
-        primary: tdee,
-        primaryLabel: 'Daily burn',
-        steps: [
-          'Gender: ${g == 1 ? "Male" : "Female"}',
-          'Age: $age, Height: $h cm, Weight: $w kg',
-          'Activity: ${_activityLabels['$a'] ?? "?"} (× $factor)',
-          'BMR (Harris-Benedict) = ${bmr.toStringAsFixed(0)} kcal/day',
-          'TDEE = BMR × Activity = ${tdee.toStringAsFixed(0)} kcal/day',
-          'For reference only. Not medical advice.',
-        ],
-      );
-    },
-    (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()),
-  );
+  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(() async {
+    final g = parseField(values['gender'] ?? '', key: 'gender').round();
+    final age = parseField(values['age'] ?? '', key: 'age');
+    final h = parseField(values['h'] ?? '', key: 'height');
+    final w = parseField(values['w'] ?? '', key: 'weight');
+    final a = parseField(values['act'] ?? '', key: 'activity').round();
+    // Harris-Benedict (revised 1984).
+    double bmr;
+    if (g == 1) {
+      bmr = 88.362 + 13.397 * w + 4.799 * h - 5.677 * age;
+    } else {
+      bmr = 447.593 + 9.247 * w + 3.098 * h - 4.330 * age;
+    }
+    final factor = _activityFactors['$a'] ?? 1.2;
+    final tdee = bmr * factor;
+    return CalculatorResult(
+      primary: tdee,
+      primaryLabel: 'Daily burn',
+      steps: [
+        'Gender: ${g == 1 ? "Male" : "Female"}',
+        'Age: $age, Height: $h cm, Weight: $w kg',
+        'Activity: ${_activityLabels['$a'] ?? "?"} (× $factor)',
+        'BMR (Harris-Benedict) = ${bmr.toStringAsFixed(0)} kcal/day',
+        'TDEE = BMR × Activity = ${tdee.toStringAsFixed(0)} kcal/day',
+        'For reference only. Not medical advice.',
+      ],
+    );
+  }, (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()));
 }
 
+/// Registry entry for the caloricBurn calculator.
 const caloricBurnDefinition = CalculatorDefinition(
   id: 'caloric_burn',
   name: 'Caloric Burn',

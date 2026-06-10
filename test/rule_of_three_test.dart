@@ -28,9 +28,9 @@ void main() {
         'c': c.toString(),
         'kind': kindValue,
       }).run();
-      return result.getOrElse(
-        (f) => throw StateError('expected right, got failure: $f'),
-      ).primary;
+      return result
+          .getOrElse((f) => throw StateError('expected right, got failure: $f'))
+          .primary;
     }
 
     test('solves the direct proportion x = (b × c) / a', () async {
@@ -63,11 +63,7 @@ void main() {
 
     test('defaults to direct when the kind toggle is absent', () async {
       // No 'kind' key → treated as direct.
-      final result = await compute({
-        'a': '2',
-        'b': '10',
-        'c': '7',
-      }).run();
+      final result = await compute({'a': '2', 'b': '10', 'c': '7'}).run();
       final value = result.getOrElse(
         (f) => throw StateError('expected right, got failure: $f'),
       );

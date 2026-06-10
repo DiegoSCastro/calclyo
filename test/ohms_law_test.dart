@@ -23,7 +23,7 @@ void main() {
       }).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(12.0, 1e-09));
     });
@@ -37,10 +37,9 @@ void main() {
       }).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(2.0, 1e-09));
     });
-
   });
 }

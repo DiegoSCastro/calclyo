@@ -15,14 +15,10 @@ void main() {
     final compute = bodies3DDefinition.compute;
 
     test('cube side 3 → volume 27', () async {
-      final result = await compute({
-        'r': '1',
-        'h': '3',
-        'kind': 'Cube',
-      }).run();
+      final result = await compute({'r': '1', 'h': '3', 'kind': 'Cube'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(27.0, 1e-06));
     });
@@ -35,10 +31,9 @@ void main() {
       }).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(4.18879, 0.001));
     });
-
   });
 }

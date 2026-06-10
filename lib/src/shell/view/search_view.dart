@@ -17,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 ///   - When the box is empty, the recent queries list is shown instead.
 ///   - Empty state appears when the query is non-empty but yields no matches.
 class SearchView extends StatelessWidget {
+  /// Creates [SearchView].
   const SearchView({super.key});
 
   @override
@@ -95,8 +96,7 @@ class _SearchScaffoldState extends State<_SearchScaffold> {
                   focusNode: _focusNode,
                   textInputAction: TextInputAction.search,
                   onChanged: context.read<SearchCubit>().updateQuery,
-                  onSubmitted: (_) =>
-                      context.read<SearchCubit>().commitQuery(),
+                  onSubmitted: (_) => context.read<SearchCubit>().commitQuery(),
                   decoration: InputDecoration(
                     hintText: 'Search calculators',
                     prefixIcon: const Icon(Icons.search),

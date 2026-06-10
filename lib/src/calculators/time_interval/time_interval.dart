@@ -40,40 +40,39 @@ int? _parseTime(String s) {
 TaskEither<CalculatorFailure, CalculatorResult> _compute(
   Map<String, String> values,
 ) {
-  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(
-    () async {
-      final a = _parseTime(values['a'] ?? '');
-      final b = _parseTime(values['b'] ?? '');
-      if (a == null) {
-        throw const CalculatorFailure('Invalid start time (use HH:MM)');
-      }
-      if (b == null) {
-        throw const CalculatorFailure('Invalid end time (use HH:MM)');
-      }
-      var diff = b - a;
-      if (diff < 0) {
-        diff += 24 * 3600; // wrap around midnight
-      }
-      final h = diff ~/ 3600;
-      final m = (diff % 3600) ~/ 60;
-      final s = diff % 60;
-      return CalculatorResult(
-        primary: diff / 3600,
-        primaryLabel: 'Hours',
-        steps: [
-          'Start: ${values['a']}',
-          'End: ${values['b']}',
-          'Interval: ${h.toString().padLeft(2, '0')}:'
-              '${m.toString().padLeft(2, '0')}:'
-              '${s.toString().padLeft(2, '0')}',
-          'Total: ${diff} seconds (${(diff / 3600).toStringAsFixed(4)} h)',
-        ],
-      );
-    },
-    (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()),
-  );
+  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(() async {
+    final a = _parseTime(values['a'] ?? '');
+    final b = _parseTime(values['b'] ?? '');
+    if (a == null) {
+      throw const CalculatorFailure('Invalid start time (use HH:MM)');
+    }
+    if (b == null) {
+      throw const CalculatorFailure('Invalid end time (use HH:MM)');
+    }
+    var diff = b - a;
+    if (diff < 0) {
+      diff += 24 * 3600; // wrap around midnight
+    }
+    final h = diff ~/ 3600;
+    final m = (diff % 3600) ~/ 60;
+    final s = diff % 60;
+    final interval = '${h.toString().padLeft(2, '0')}:'
+        '${m.toString().padLeft(2, '0')}:'
+        '${s.toString().padLeft(2, '0')}';
+    return CalculatorResult(
+      primary: diff / 3600,
+      primaryLabel: 'Hours',
+      steps: [
+        'Start: ${values['a']}',
+        'End: ${values['b']}',
+        'Interval: $interval',
+        'Total: $diff seconds (${(diff / 3600).toStringAsFixed(4)} h)',
+      ],
+    );
+  }, (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()));
 }
 
+/// Registry entry for the timeInterval calculator.
 const timeIntervalDefinition = CalculatorDefinition(
   id: 'time_interval',
   name: 'Time Interval',

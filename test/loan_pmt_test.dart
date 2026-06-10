@@ -14,31 +14,22 @@ void main() {
   group('loanPmtDefinition.compute', () {
     final compute = loanPmtDefinition.compute;
 
-    test('\\\$200k @ 5% over 360 mo', () async {
-      final result = await compute({
-        'p': '200000',
-        'r': '5',
-        'n': '360',
-      }).run();
+    test(r'\$200k @ 5% over 360 mo', () async {
+      final result = await compute({'p': '200000', 'r': '5', 'n': '360'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(1073.64, 0.1));
     });
 
-    test('\\\$0 loan → 0', () async {
-      final result = await compute({
-        'p': '0',
-        'r': '5',
-        'n': '12',
-      }).run();
+    test(r'\$0 loan → 0', () async {
+      final result = await compute({'p': '0', 'r': '5', 'n': '12'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(0.0, 1e-06));
     });
-
   });
 }

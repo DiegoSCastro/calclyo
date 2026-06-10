@@ -1,34 +1,47 @@
 import 'package:calclyo/src/calculators/_widgets.dart';
+import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
+    show parseField;
 import 'package:calclyo/src/core/calculator.dart';
 import 'package:calclyo/src/core/categories.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 
-import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
-    show parseField;
-
+/// AreaUnit values.
 enum AreaUnit {
+  /// m2.
   m2,
+
+  /// km2.
   km2,
+
+  /// cm2.
   cm2,
+
+  /// mm2.
   mm2,
+
+  /// ha.
   ha,
+
+  /// acre.
   acre,
+
+  /// ft2.
   ft2,
+
+  /// yd2.
   yd2,
+
+  /// mi2.
   mi2,
 }
 
 const _areaInputSchema = CalculatorInputSchema(
-  fields: [
-    CalculatorInputField(key: 'v', label: 'value', defaultValue: '1'),
-  ],
+  fields: [CalculatorInputField(key: 'v', label: 'value', defaultValue: '1')],
   controls: [
     SegmentedToggleControl(
       key: 'unit',
-      options: [
-        'm²', 'km²', 'cm²', 'mm²', 'ha', 'acre', 'ft²', 'yd²', 'mi²',
-      ],
+      options: ['m²', 'km²', 'cm²', 'mm²', 'ha', 'acre', 'ft²', 'yd²', 'mi²'],
     ),
   ],
 );
@@ -49,27 +62,25 @@ const _toSquareMeters = <String, double>{
 TaskEither<CalculatorFailure, CalculatorResult> _compute(
   Map<String, String> values,
 ) {
-  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(
-    () async {
-      final v = parseField(values['v'] ?? '', key: 'value');
-      final u = values['unit'] ?? 'm²';
-      final m2 = v * (_toSquareMeters[u] ?? 1);
-      final lines = <String>['$v $u = ${m2.toStringAsFixed(4)} m²'];
-      for (final entry in _toSquareMeters.entries) {
-        if (entry.key == u) continue;
-        final converted = m2 / entry.value;
-        lines.add('  = ${converted.toStringAsFixed(6)} ${entry.key}');
-      }
-      return CalculatorResult(
-        primary: m2,
-        primaryLabel: '$v $u in m²',
-        steps: lines,
-      );
-    },
-    (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()),
-  );
+  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(() async {
+    final v = parseField(values['v'] ?? '', key: 'value');
+    final u = values['unit'] ?? 'm²';
+    final m2 = v * (_toSquareMeters[u] ?? 1);
+    final lines = <String>['$v $u = ${m2.toStringAsFixed(4)} m²'];
+    for (final entry in _toSquareMeters.entries) {
+      if (entry.key == u) continue;
+      final converted = m2 / entry.value;
+      lines.add('  = ${converted.toStringAsFixed(6)} ${entry.key}');
+    }
+    return CalculatorResult(
+      primary: m2,
+      primaryLabel: '$v $u in m²',
+      steps: lines,
+    );
+  }, (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()));
 }
 
+/// Registry entry for the area calculator.
 const areaDefinition = CalculatorDefinition(
   id: 'area',
   name: 'Area',

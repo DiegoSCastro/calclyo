@@ -15,28 +15,21 @@ void main() {
     final compute = dataTransferDefinition.compute;
 
     test('1 Mbps = 1000000 bps', () async {
-      final result = await compute({
-        'v': '1',
-        'unit': 'Mbps',
-      }).run();
+      final result = await compute({'v': '1', 'unit': 'Mbps'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(1000000.0, 1e-06));
     });
 
     test('1 MB/s = 8000000 bps', () async {
-      final result = await compute({
-        'v': '1',
-        'unit': 'MB/s',
-      }).run();
+      final result = await compute({'v': '1', 'unit': 'MB/s'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(8000000.0, 1e-06));
     });
-
   });
 }

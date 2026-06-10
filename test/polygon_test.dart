@@ -15,28 +15,21 @@ void main() {
     final compute = polygonDefinition.compute;
 
     test('regular hexagon side 5', () async {
-      final result = await compute({
-        'n': '6',
-        's': '5',
-      }).run();
+      final result = await compute({'n': '6', 's': '5'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(64.9519052838329, 1e-06));
     });
 
     test('square side 4', () async {
-      final result = await compute({
-        'n': '4',
-        's': '4',
-      }).run();
+      final result = await compute({'n': '4', 's': '4'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(16.0, 1e-06));
     });
-
   });
 }

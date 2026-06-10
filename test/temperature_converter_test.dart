@@ -15,28 +15,21 @@ void main() {
     final compute = temperatureConverterDefinition.compute;
 
     test('0 °C = 0 °C', () async {
-      final result = await compute({
-        'v': '0',
-        'unit': 'C',
-      }).run();
+      final result = await compute({'v': '0', 'unit': 'C'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(0.0, 1e-06));
     });
 
     test('100 °C primary is C', () async {
-      final result = await compute({
-        'v': '100',
-        'unit': 'C',
-      }).run();
+      final result = await compute({'v': '100', 'unit': 'C'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(100.0, 1e-06));
     });
-
   });
 }

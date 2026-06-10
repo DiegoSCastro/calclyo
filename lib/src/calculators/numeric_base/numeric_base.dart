@@ -13,9 +13,7 @@ const _kindOct2Dec = 'Oct → Dec';
 const _kindHex2Dec = 'Hex → Dec';
 
 const _numericBaseInputSchema = CalculatorInputSchema(
-  fields: [
-    CalculatorInputField(key: 'v', label: 'value', defaultValue: '255'),
-  ],
+  fields: [CalculatorInputField(key: 'v', label: 'value', defaultValue: '255')],
   controls: [
     SegmentedToggleControl(
       key: _kindKey,
@@ -49,37 +47,33 @@ const _baseMap = <String, _BasePair>{
 TaskEither<CalculatorFailure, CalculatorResult> _compute(
   Map<String, String> values,
 ) {
-  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(
-    () async {
-      final raw = (values['v'] ?? '').trim();
-      if (raw.isEmpty) {
-        throw const CalculatorFailure('value is required');
-      }
-      final kind = values[_kindKey] ?? _kindDec2Hex;
-      final pair = _baseMap[kind] ?? _baseMap[_kindDec2Hex]!;
-      final n = int.tryParse(raw, radix: pair.from);
-      if (n == null) {
-        throw CalculatorFailure(
-          '"$raw" is not a valid base-${pair.from} number',
-        );
-      }
-      final formatted = pair.to == 10
-          ? n.toString()
-          : n.toRadixString(pair.to).toUpperCase();
-      return CalculatorResult(
-        primary: n.toDouble(),
-        primaryLabel: pair.to == 10 ? 'dec' : 'value',
-        steps: [
-          'Input: $raw ($kind)',
-          'Parsed value: $n (base 10)',
-          'Result: $formatted (base ${pair.to})',
-        ],
-      );
-    },
-    (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()),
-  );
+  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(() async {
+    final raw = (values['v'] ?? '').trim();
+    if (raw.isEmpty) {
+      throw const CalculatorFailure('value is required');
+    }
+    final kind = values[_kindKey] ?? _kindDec2Hex;
+    final pair = _baseMap[kind] ?? _baseMap[_kindDec2Hex]!;
+    final n = int.tryParse(raw, radix: pair.from);
+    if (n == null) {
+      throw CalculatorFailure('"$raw" is not a valid base-${pair.from} number');
+    }
+    final formatted = pair.to == 10
+        ? n.toString()
+        : n.toRadixString(pair.to).toUpperCase();
+    return CalculatorResult(
+      primary: n.toDouble(),
+      primaryLabel: pair.to == 10 ? 'dec' : 'value',
+      steps: [
+        'Input: $raw ($kind)',
+        'Parsed value: $n (base 10)',
+        'Result: $formatted (base ${pair.to})',
+      ],
+    );
+  }, (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()));
 }
 
+/// Registry entry for the numericBase calculator.
 const numericBaseDefinition = CalculatorDefinition(
   id: 'numeric_base',
   name: 'Numeric Base',

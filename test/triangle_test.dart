@@ -15,27 +15,21 @@ void main() {
     final compute = triangleDefinition.compute;
 
     test('3-4-5 right triangle area = 6', () async {
-      final result = await compute({
-        'a': '3',
-        'b': '4',
-        'c': '5',
-      }).run();
+      final result = await compute({'a': '3', 'b': '4', 'c': '5'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(6.0, 1e-06));
     });
 
     test('fails on triangle inequality', () async {
-      final result = await compute({
-        'a': '1',
-        'b': '1',
-        'c': '3',
-      }).run();
-      expect(result.isLeft(), isTrue,
-          reason: 'expected failure for a=1, b=1, c=3');
+      final result = await compute({'a': '1', 'b': '1', 'c': '3'}).run();
+      expect(
+        result.isLeft(),
+        isTrue,
+        reason: 'expected failure for a=1, b=1, c=3',
+      );
     });
-
   });
 }

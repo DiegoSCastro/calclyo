@@ -15,12 +15,14 @@ import 'package:flutter/material.dart';
 /// need their own `stepRenderer` if they want specialised result layout
 /// (the default renders [CalculatorResult] generically).
 class CalculatorFormView extends StatefulWidget {
+  /// Creates [CalculatorFormView].
   const CalculatorFormView({
     required this.definition,
     this.initialValues = const <String, String>{},
     super.key,
   });
 
+  /// definition.
   final CalculatorDefinition definition;
 
   /// Pre-filled values for any of the schema's fields/controls. Keys
@@ -92,7 +94,8 @@ class _CalculatorFormViewState extends State<CalculatorFormView> {
         _error = failure.message;
       }),
       (value) {
-        final summary = '${value.primaryLabel} = '
+        final summary =
+            '${value.primaryLabel} = '
             '${value.primary.toStringAsFixed(6)}';
         setState(() {
           _result = value;
@@ -221,12 +224,8 @@ class _ResultArea extends StatelessWidget {
     }
     final r = result;
     if (r == null) {
-      return const Center(
-        child: Text('Enter values and tap "Calculate"'),
-      );
+      return const Center(child: Text('Enter values and tap "Calculate"'));
     }
-    return SingleChildScrollView(
-      child: definition.stepRenderer(context, r),
-    );
+    return SingleChildScrollView(child: definition.stepRenderer(context, r));
   }
 }

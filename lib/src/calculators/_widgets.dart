@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 
 /// Default step renderer — a card showing the primary value and the step
 /// list. Used by every calculator that doesn't need a specialised layout.
-Widget genericStepRenderer(
-  BuildContext context,
-  CalculatorResult result,
-) {
+Widget genericStepRenderer(BuildContext context, CalculatorResult result) {
   final theme = Theme.of(context);
   return Card(
     child: Padding(
@@ -75,10 +72,7 @@ Widget genericStepRendererWithText(
 /// Standard "calculator failed" card. Computations raise
 /// [CalculatorFailure] and the form view surfaces the message; this is
 /// here for symmetry and to keep `try/catch` out of calculator code.
-Widget errorStepRenderer(
-  BuildContext context,
-  CalculatorFailure failure,
-) {
+Widget errorStepRenderer(BuildContext context, CalculatorFailure failure) {
   return Card(
     color: Theme.of(context).colorScheme.errorContainer,
     child: Padding(

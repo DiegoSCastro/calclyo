@@ -14,29 +14,22 @@ void main() {
   group('tipDefinition.compute', () {
     final compute = tipDefinition.compute;
 
-    test('\\\$50 at 18% → \\\$9 tip', () async {
-      final result = await compute({
-        'bill': '50',
-        'pct': '18',
-      }).run();
+    test(r'\$50 at 18% → \$9 tip', () async {
+      final result = await compute({'bill': '50', 'pct': '18'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(9.0, 1e-06));
     });
 
-    test('\\\$100 at 20% → \\\$20 tip', () async {
-      final result = await compute({
-        'bill': '100',
-        'pct': '20',
-      }).run();
+    test(r'\$100 at 20% → \$20 tip', () async {
+      final result = await compute({'bill': '100', 'pct': '20'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(20.0, 1e-06));
     });
-
   });
 }

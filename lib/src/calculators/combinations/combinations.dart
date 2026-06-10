@@ -1,11 +1,10 @@
 import 'package:calclyo/src/calculators/_widgets.dart';
+import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
+    show parseField;
 import 'package:calclyo/src/core/calculator.dart';
 import 'package:calclyo/src/core/categories.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
-
-import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
-    show parseField;
 
 const _combinationsInputSchema = CalculatorInputSchema(
   fields: [
@@ -22,9 +21,9 @@ int _nCr(int n, int r) {
     throw const CalculatorFailure('r cannot exceed n');
   }
   // Use multiplicative formula to avoid huge intermediate factorials.
-  r = r > n - r ? n - r : r;
+  final k = r > n - r ? n - r : r;
   var result = 1;
-  for (var i = 0; i < r; i++) {
+  for (var i = 0; i < k; i++) {
     result = result * (n - i) ~/ (i + 1);
   }
   return result;
@@ -33,30 +32,28 @@ int _nCr(int n, int r) {
 TaskEither<CalculatorFailure, CalculatorResult> _compute(
   Map<String, String> values,
 ) {
-  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(
-    () async {
-      final nRaw = parseField(values['n'] ?? '', key: 'n');
-      final rRaw = parseField(values['r'] ?? '', key: 'r');
-      final n = nRaw.round();
-      final r = rRaw.round();
-      if (n != nRaw || r != rRaw || n < 0 || r < 0) {
-        throw const CalculatorFailure('n and r must be non-negative integers');
-      }
-      final c = _nCr(n, r);
-      return CalculatorResult(
-        primary: c.toDouble(),
-        primaryLabel: 'C(n,r)',
-        steps: [
-          'n = $n, r = $r',
-          'C(n, r) = n! / (r! (n − r)!)',
-          'C($n, $r) = $c',
-        ],
-      );
-    },
-    (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()),
-  );
+  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(() async {
+    final nRaw = parseField(values['n'] ?? '', key: 'n');
+    final rRaw = parseField(values['r'] ?? '', key: 'r');
+    final n = nRaw.round();
+    final r = rRaw.round();
+    if (n != nRaw || r != rRaw || n < 0 || r < 0) {
+      throw const CalculatorFailure('n and r must be non-negative integers');
+    }
+    final c = _nCr(n, r);
+    return CalculatorResult(
+      primary: c.toDouble(),
+      primaryLabel: 'C(n,r)',
+      steps: [
+        'n = $n, r = $r',
+        'C(n, r) = n! / (r! (n − r)!)',
+        'C($n, $r) = $c',
+      ],
+    );
+  }, (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()));
 }
 
+/// Registry entry for the combinations calculator.
 const combinationsDefinition = CalculatorDefinition(
   id: 'combinations',
   name: 'Combinations',

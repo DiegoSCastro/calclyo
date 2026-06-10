@@ -1,11 +1,10 @@
 import 'package:calclyo/src/calculators/_widgets.dart';
+import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
+    show parseField;
 import 'package:calclyo/src/core/calculator.dart';
 import 'package:calclyo/src/core/categories.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
-
-import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
-    show parseField;
 
 const _gcfLcmInputSchema = CalculatorInputSchema(
   fields: [
@@ -15,14 +14,14 @@ const _gcfLcmInputSchema = CalculatorInputSchema(
 );
 
 int _gcd(int a, int b) {
-  a = a.abs();
-  b = b.abs();
-  while (b != 0) {
-    final t = b;
-    b = a % b;
-    a = t;
+  var x = a.abs();
+  var y = b.abs();
+  while (y != 0) {
+    final t = y;
+    y = x % y;
+    x = t;
   }
-  return a;
+  return x;
 }
 
 int _lcm(int a, int b) {
@@ -33,33 +32,31 @@ int _lcm(int a, int b) {
 TaskEither<CalculatorFailure, CalculatorResult> _compute(
   Map<String, String> values,
 ) {
-  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(
-    () async {
-      final aRaw = parseField(values['a'] ?? '', key: 'A', allowZero: false);
-      final bRaw = parseField(values['b'] ?? '', key: 'B', allowZero: false);
-      final a = aRaw.round();
-      final b = bRaw.round();
-      if (a != aRaw || b != bRaw) {
-        throw const CalculatorFailure('Inputs must be whole numbers');
-      }
-      final g = _gcd(a, b);
-      final l = _lcm(a, b);
-      return CalculatorResult(
-        primary: g.toDouble(),
-        primaryLabel: 'GCF',
-        steps: [
-          'Given: A=$a, B=$b',
-          'GCD via Euclidean algorithm',
-          'LCM = |A × B| / GCD',
-          'GCD = $g',
-          'LCM = $l',
-        ],
-      );
-    },
-    (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()),
-  );
+  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(() async {
+    final aRaw = parseField(values['a'] ?? '', key: 'A', allowZero: false);
+    final bRaw = parseField(values['b'] ?? '', key: 'B', allowZero: false);
+    final a = aRaw.round();
+    final b = bRaw.round();
+    if (a != aRaw || b != bRaw) {
+      throw const CalculatorFailure('Inputs must be whole numbers');
+    }
+    final g = _gcd(a, b);
+    final l = _lcm(a, b);
+    return CalculatorResult(
+      primary: g.toDouble(),
+      primaryLabel: 'GCF',
+      steps: [
+        'Given: A=$a, B=$b',
+        'GCD via Euclidean algorithm',
+        'LCM = |A × B| / GCD',
+        'GCD = $g',
+        'LCM = $l',
+      ],
+    );
+  }, (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()));
 }
 
+/// Registry entry for the gcfLcm calculator.
 const gcfLcmDefinition = CalculatorDefinition(
   id: 'gcf_lcm',
   name: 'GCF & LCM',

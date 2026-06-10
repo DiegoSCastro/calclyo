@@ -1,11 +1,10 @@
 import 'package:calclyo/src/calculators/_widgets.dart';
+import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
+    show parseField;
 import 'package:calclyo/src/core/calculator.dart';
 import 'package:calclyo/src/core/categories.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
-
-import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
-    show parseField;
 
 const _energyInputSchema = CalculatorInputSchema(
   fields: [
@@ -32,26 +31,24 @@ const _toJoules = <String, double>{
 TaskEither<CalculatorFailure, CalculatorResult> _compute(
   Map<String, String> values,
 ) {
-  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(
-    () async {
-      final v = parseField(values['v'] ?? '', key: 'value');
-      final u = values['unit'] ?? 'J';
-      final j = v * (_toJoules[u] ?? 1);
-      final lines = <String>['$v $u = ${j.toStringAsFixed(4)} J'];
-      for (final entry in _toJoules.entries) {
-        if (entry.key == u) continue;
-        lines.add('  = ${(j / entry.value).toStringAsFixed(6)} ${entry.key}');
-      }
-      return CalculatorResult(
-        primary: j,
-        primaryLabel: '$v $u in J',
-        steps: lines,
-      );
-    },
-    (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()),
-  );
+  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(() async {
+    final v = parseField(values['v'] ?? '', key: 'value');
+    final u = values['unit'] ?? 'J';
+    final j = v * (_toJoules[u] ?? 1);
+    final lines = <String>['$v $u = ${j.toStringAsFixed(4)} J'];
+    for (final entry in _toJoules.entries) {
+      if (entry.key == u) continue;
+      lines.add('  = ${(j / entry.value).toStringAsFixed(6)} ${entry.key}');
+    }
+    return CalculatorResult(
+      primary: j,
+      primaryLabel: '$v $u in J',
+      steps: lines,
+    );
+  }, (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()));
 }
 
+/// Registry entry for the energy calculator.
 const energyDefinition = CalculatorDefinition(
   id: 'energy',
   name: 'Energy',

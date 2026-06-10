@@ -23,7 +23,7 @@ void main() {
       }).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(2.0, 1e-09));
     });
@@ -35,9 +35,11 @@ void main() {
         'c': '2',
         'kind': 'Linear (ax + b = c)',
       }).run();
-      expect(result.isLeft(), isTrue,
-          reason: 'expected failure for a=0, b=1, c=2, kind=Linear (ax + b = c)');
+      expect(
+        result.isLeft(),
+        isTrue,
+        reason: 'expected failure for a=0, b=1, c=2, kind=Linear (ax + b = c)',
+      );
     });
-
   });
 }

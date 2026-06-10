@@ -15,9 +15,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 ///   - [commitQuery] persists the current query as the most recent entry.
 ///   - [removeRecent] deletes a single entry.
 class SearchCubit extends Cubit<SearchState> {
+  /// Documented member.
   SearchCubit({required RecentsRepository recents})
-      : _recents = recents,
-        super(const SearchState.initial()) {
+    : _recents = recents,
+      super(const SearchState.initial()) {
     // Cache the grouped registry once — `categoriesWithCalculators` rebuilds
     // a map on every call, which we do not need to repeat per keystroke.
     _groups = calculatorRegistry.categoriesWithCalculators;
@@ -39,10 +40,7 @@ class SearchCubit extends Cubit<SearchState> {
         ),
       ),
       (recents) => emit(
-        state.copyWith(
-          status: SearchStatus.ready,
-          recentQueries: recents,
-        ),
+        state.copyWith(status: SearchStatus.ready, recentQueries: recents),
       ),
     );
   }
@@ -56,9 +54,10 @@ class SearchCubit extends Cubit<SearchState> {
     emit(state.copyWith(query: query, results: groups));
   }
 
-  /// Persist [state.query] as the most recent entry. No-op if the query is
-  /// blank or already the head of the recents list. Re-emits state with the
-  /// new recents list on success.
+  /// Persist the current search query as the most recent entry.
+  ///
+  /// No-op if the query is blank or already the head of the recents list.
+  /// Re-emits state with the new recents list on success.
   Future<void> commitQuery() async {
     final q = state.query.trim();
     if (q.isEmpty) return;

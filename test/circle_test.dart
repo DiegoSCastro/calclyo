@@ -15,28 +15,21 @@ void main() {
     final compute = circleDefinition.compute;
 
     test('radius 5 → area = 25π', () async {
-      final result = await compute({
-        'v': '5',
-        'mode': 'Radius',
-      }).run();
+      final result = await compute({'v': '5', 'mode': 'Radius'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(78.53981633974475, 0.001));
     });
 
     test('diameter 10 → area = 25π', () async {
-      final result = await compute({
-        'v': '10',
-        'mode': 'Diameter',
-      }).run();
+      final result = await compute({'v': '10', 'mode': 'Diameter'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(78.53981633974475, 0.001));
     });
-
   });
 }

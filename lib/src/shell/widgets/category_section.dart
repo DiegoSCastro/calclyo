@@ -1,13 +1,15 @@
-import 'package:calclyo/src/core/categories.dart';
 import 'package:calclyo/src/core/calculator.dart';
+import 'package:calclyo/src/core/categories.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 /// One section in the home screen: an uppercase header followed by a list
 /// of calculator [ListTile]s. Replaces the v0.1 [ExpansionTile] layout.
 class CategorySection extends StatelessWidget {
+  /// Creates [CategorySection].
   const CategorySection({required this.entry, super.key});
 
+  /// entry.
   final CalculatorCategoryWithCalculators entry;
 
   @override

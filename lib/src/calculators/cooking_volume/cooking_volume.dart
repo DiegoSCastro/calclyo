@@ -1,16 +1,13 @@
 import 'package:calclyo/src/calculators/_widgets.dart';
+import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
+    show parseField;
 import 'package:calclyo/src/core/calculator.dart';
 import 'package:calclyo/src/core/categories.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 
-import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
-    show parseField;
-
 const _volumeInputSchema = CalculatorInputSchema(
-  fields: [
-    CalculatorInputField(key: 'v', label: 'value', defaultValue: '1'),
-  ],
+  fields: [CalculatorInputField(key: 'v', label: 'value', defaultValue: '1')],
   controls: [
     SegmentedToggleControl(
       key: 'unit',
@@ -33,27 +30,25 @@ const _toMilliliters = <String, double>{
 TaskEither<CalculatorFailure, CalculatorResult> _compute(
   Map<String, String> values,
 ) {
-  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(
-    () async {
-      final v = parseField(values['v'] ?? '', key: 'value');
-      final u = values['unit'] ?? 'mL';
-      final ml = v * (_toMilliliters[u] ?? 1);
-      final lines = <String>['$v $u = ${ml.toStringAsFixed(4)} mL'];
-      for (final entry in _toMilliliters.entries) {
-        if (entry.key == u) continue;
-        final converted = ml / entry.value;
-        lines.add('  = ${converted.toStringAsFixed(6)} ${entry.key}');
-      }
-      return CalculatorResult(
-        primary: ml,
-        primaryLabel: '$v $u in mL',
-        steps: lines,
-      );
-    },
-    (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()),
-  );
+  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(() async {
+    final v = parseField(values['v'] ?? '', key: 'value');
+    final u = values['unit'] ?? 'mL';
+    final ml = v * (_toMilliliters[u] ?? 1);
+    final lines = <String>['$v $u = ${ml.toStringAsFixed(4)} mL'];
+    for (final entry in _toMilliliters.entries) {
+      if (entry.key == u) continue;
+      final converted = ml / entry.value;
+      lines.add('  = ${converted.toStringAsFixed(6)} ${entry.key}');
+    }
+    return CalculatorResult(
+      primary: ml,
+      primaryLabel: '$v $u in mL',
+      steps: lines,
+    );
+  }, (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()));
 }
 
+/// Registry entry for the cookingVolume calculator.
 const cookingVolumeDefinition = CalculatorDefinition(
   id: 'cooking_volume',
   name: 'Cooking Volume',

@@ -1,15 +1,25 @@
 import 'dart:math' as math;
 
 import 'package:calclyo/src/calculators/_widgets.dart';
+import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
+    show parseField;
 import 'package:calclyo/src/core/calculator.dart';
 import 'package:calclyo/src/core/categories.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 
-import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
-    show parseField;
+/// GeneratorKind values.
+/// Number generator modes.
+enum GeneratorKind {
+  /// Random integers.
+  randomInt,
 
-enum GeneratorKind { randomInt, arithmeticSeq, geometricSeq }
+  /// Arithmetic sequence.
+  arithmeticSeq,
+
+  /// Geometric sequence.
+  geometricSeq,
+}
 
 const _kindKey = 'kind';
 const _kindRandom = 'Random int';
@@ -64,10 +74,7 @@ CalculatorResult _solve(Map<String, String> values) {
       return CalculatorResult(
         primary: r.toDouble(),
         primaryLabel: 'Random',
-        steps: [
-          'Range: [$lo, $hi]',
-          'Picked: $r',
-        ],
+        steps: ['Range: [$lo, $hi]', 'Picked: $r'],
       );
     case _kindArith:
       final terms = <double>[];
@@ -107,6 +114,7 @@ CalculatorResult _solve(Map<String, String> values) {
   }
 }
 
+/// Registry entry for the numberGenerator calculator.
 const numberGeneratorDefinition = CalculatorDefinition(
   id: 'number_generator',
   name: 'Number Generator',

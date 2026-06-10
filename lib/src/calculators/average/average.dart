@@ -17,10 +17,7 @@ const _averageInputSchema = CalculatorInputSchema(
 /// Parse a comma-separated list of numbers and return them. Throws
 /// [CalculatorFailure] on bad input.
 List<double> parseNumbers(String raw) {
-  final parts = raw
-      .split(',')
-      .map((p) => p.trim())
-      .where((p) => p.isNotEmpty);
+  final parts = raw.split(',').map((p) => p.trim()).where((p) => p.isNotEmpty);
   final result = <double>[];
   for (final p in parts) {
     final v = double.tryParse(p);
@@ -38,29 +35,25 @@ List<double> parseNumbers(String raw) {
 TaskEither<CalculatorFailure, CalculatorResult> _compute(
   Map<String, String> values,
 ) {
-  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(
-    () async {
-      final raw = values['values'] ?? '';
-      final nums = parseNumbers(raw);
-      final sum = nums.fold<double>(0, (a, b) => a + b);
-      final mean = sum / nums.length;
-      return CalculatorResult(
-        primary: mean,
-        primaryLabel: 'Mean',
-        steps: [
-          'Numbers: ${nums.map((n) => n.toStringAsFixed(2)).toList()}',
-          'Sum = ${sum.toStringAsFixed(6)}',
-          'Count = ${nums.length}',
-          'Mean = Sum / Count = '
-              '${sum.toStringAsFixed(6)} / ${nums.length} = '
-              '${mean.toStringAsFixed(6)}',
-        ],
-      );
-    },
-    (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()),
-  );
+  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(() async {
+    final raw = values['values'] ?? '';
+    final nums = parseNumbers(raw);
+    final sum = nums.fold<double>(0, (a, b) => a + b);
+    final mean = sum / nums.length;
+    return CalculatorResult(
+      primary: mean,
+      primaryLabel: 'Mean',
+      steps: [
+        'Numbers: ${nums.map((n) => n.toStringAsFixed(2)).toList()}',
+        'Sum = ${sum.toStringAsFixed(6)}',
+        'Count = ${nums.length}',
+        'Mean = Sum / Count = ${sum.toStringAsFixed(6)} / ${nums.length} = ${mean.toStringAsFixed(6)}',
+      ],
+    );
+  }, (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()));
 }
 
+/// Registry entry for the average calculator.
 const averageDefinition = CalculatorDefinition(
   id: 'average',
   name: 'Average',

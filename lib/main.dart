@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:calclyo/app/app.dart';
 import 'package:calclyo/src/features/history/history_view.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {

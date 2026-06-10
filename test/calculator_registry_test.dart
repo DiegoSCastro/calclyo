@@ -44,10 +44,7 @@ void main() {
         final group = calculatorRegistry.categoriesWithCalculators.firstWhere(
           (g) => g.category.id == calc.category,
         );
-        expect(
-          group.calculators.map((c) => c.id),
-          contains(calc.id),
-        );
+        expect(group.calculators.map((c) => c.id), contains(calc.id));
       }
     });
 

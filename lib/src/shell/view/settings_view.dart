@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 /// Placeholder for the Settings screen. v0.2 surfaces the three values
 /// the contract promises: theme, version, and a stub sign-in row.
 class SettingsView extends StatelessWidget {
+  /// Creates [SettingsView].
   const SettingsView({super.key});
 
   @override
@@ -20,10 +21,10 @@ class SettingsView extends StatelessWidget {
             onTap: () {},
           ),
           const Divider(),
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: const Text('Version'),
-            subtitle: const Text('0.2.0+1'),
+          const ListTile(
+            leading: Icon(Icons.info_outline),
+            title: Text('Version'),
+            subtitle: Text('0.2.0+1'),
           ),
           const Divider(),
           ListTile(

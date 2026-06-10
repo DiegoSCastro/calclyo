@@ -25,7 +25,7 @@ void main() {
       }).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(7.0, 1e-09));
     });
@@ -39,9 +39,12 @@ void main() {
         'count': '100',
         'kind': 'Arithmetic sequence',
       }).run();
-      expect(result.isLeft(), isTrue,
-          reason: 'expected failure for min=1, max=10, first=1, step=2, count=100, kind=Arithmetic sequence');
+      expect(
+        result.isLeft(),
+        isTrue,
+        reason: 'expected failure for min=1, max=10, first=1, step=2, '
+            'count=100, kind=Arithmetic sequence',
+      );
     });
-
   });
 }

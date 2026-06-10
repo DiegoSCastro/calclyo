@@ -1,10 +1,9 @@
+import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
+    show parseField;
 import 'package:calclyo/src/core/calculator.dart';
 import 'package:calclyo/src/core/categories.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
-
-import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
-    show parseField;
 
 const _disclaimer = 'For reference only. Not medical advice.';
 
@@ -18,26 +17,23 @@ const _bmiInputSchema = CalculatorInputSchema(
 TaskEither<CalculatorFailure, CalculatorResult> _compute(
   Map<String, String> values,
 ) {
-  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(
-    () async {
-      final h = parseField(values['h'] ?? '', key: 'height', allowZero: false);
-      final w = parseField(values['w'] ?? '', key: 'weight');
-      final m = h / 100;
-      final bmi = w / (m * m);
-      final category = _bmiCategory(bmi);
-      return CalculatorResult(
-        primary: bmi,
-        primaryLabel: 'BMI',
-        steps: [
-          'Height: $h cm, Weight: $w kg',
-          'BMI = Weight / Height² = ${bmi.toStringAsFixed(2)}',
-          'Category: $category',
-          _disclaimer,
-        ],
-      );
-    },
-    (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()),
-  );
+  return TaskEither<CalculatorFailure, CalculatorResult>.tryCatch(() async {
+    final h = parseField(values['h'] ?? '', key: 'height', allowZero: false);
+    final w = parseField(values['w'] ?? '', key: 'weight');
+    final m = h / 100;
+    final bmi = w / (m * m);
+    final category = _bmiCategory(bmi);
+    return CalculatorResult(
+      primary: bmi,
+      primaryLabel: 'BMI',
+      steps: [
+        'Height: $h cm, Weight: $w kg',
+        'BMI = Weight / Height² = ${bmi.toStringAsFixed(2)}',
+        'Category: $category',
+        _disclaimer,
+      ],
+    );
+  }, (e, _) => e is CalculatorFailure ? e : CalculatorFailure(e.toString()));
 }
 
 String _bmiCategory(double bmi) {
@@ -47,6 +43,7 @@ String _bmiCategory(double bmi) {
   return 'Obese';
 }
 
+/// healthRenderer.
 Widget healthRenderer(BuildContext context, CalculatorResult result) {
   final theme = Theme.of(context);
   return Card(
@@ -86,6 +83,7 @@ Widget healthRenderer(BuildContext context, CalculatorResult result) {
   );
 }
 
+/// Registry entry for the bmi calculator.
 const bmiDefinition = CalculatorDefinition(
   id: 'bmi',
   name: 'BMI',

@@ -1,9 +1,23 @@
 import 'package:calclyo/src/core/calculator.dart';
 import 'package:calclyo/src/core/categories.dart';
+import 'package:calclyo/src/features/search/search_cubit.dart' show SearchCubit;
 import 'package:equatable/equatable.dart';
 
 /// Status flag for the search screen.
-enum SearchStatus { initial, loading, ready, failure }
+/// Status flag for the search screen.
+enum SearchStatus {
+  /// Initial state.
+  initial,
+
+  /// Loading recents.
+  loading,
+
+  /// Ready to search.
+  ready,
+
+  /// Failed to load recents.
+  failure,
+}
 
 /// Immutable state the [SearchCubit] emits.
 ///
@@ -14,6 +28,7 @@ enum SearchStatus { initial, loading, ready, failure }
 ///   computed live from [query].
 /// - [status] reflects the lifecycle of the initial recents load.
 class SearchState extends Equatable {
+  /// Creates [SearchState].
   const SearchState({
     required this.status,
     required this.query,
@@ -22,22 +37,33 @@ class SearchState extends Equatable {
     this.errorMessage,
   });
 
+  /// Documented member.
   const SearchState.initial()
-      : status = SearchStatus.initial,
-        query = '',
-        recentQueries = const [],
-        results = const [],
-        errorMessage = null;
+    : status = SearchStatus.initial,
+      query = '',
+      recentQueries = const [],
+      results = const [],
+      errorMessage = null;
 
+  /// status.
   final SearchStatus status;
+
+  /// query.
   final String query;
+
+  /// recentQueries.
   final List<String> recentQueries;
+
+  /// results.
   final List<CalculatorCategoryWithCalculators> results;
+
+  /// errorMessage.
   final String? errorMessage;
 
   /// True when the user typed a non-empty query and nothing matched.
   bool get isEmpty => query.trim().isNotEmpty && results.isEmpty;
 
+  /// copyWith.
   SearchState copyWith({
     SearchStatus? status,
     String? query,
@@ -55,8 +81,13 @@ class SearchState extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [status, query, recentQueries, results, errorMessage];
+  List<Object?> get props => [
+    status,
+    query,
+    recentQueries,
+    results,
+    errorMessage,
+  ];
 }
 
 /// Pure filter helper. Exposed (not private) so unit tests can exercise the
@@ -75,10 +106,12 @@ List<CalculatorCategoryWithCalculators> filterCalculators({
   }
   final filtered = <CalculatorCategoryWithCalculators>[];
   for (final group in groups) {
-    final matches = group.calculators.where((calc) {
-      return calc.name.toLowerCase().contains(needle) ||
-          calc.subtitle.toLowerCase().contains(needle);
-    }).toList(growable: false);
+    final matches = group.calculators
+        .where((calc) {
+          return calc.name.toLowerCase().contains(needle) ||
+              calc.subtitle.toLowerCase().contains(needle);
+        })
+        .toList(growable: false);
     if (matches.isNotEmpty) {
       filtered.add(
         CalculatorCategoryWithCalculators(

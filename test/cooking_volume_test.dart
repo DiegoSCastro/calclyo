@@ -15,28 +15,21 @@ void main() {
     final compute = cookingVolumeDefinition.compute;
 
     test('1 cup = 240 mL', () async {
-      final result = await compute({
-        'v': '1',
-        'unit': 'cup',
-      }).run();
+      final result = await compute({'v': '1', 'unit': 'cup'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(240.0, 1e-06));
     });
 
     test('1 L = 1000 mL', () async {
-      final result = await compute({
-        'v': '1',
-        'unit': 'L',
-      }).run();
+      final result = await compute({'v': '1', 'unit': 'L'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(1000.0, 1e-06));
     });
-
   });
 }

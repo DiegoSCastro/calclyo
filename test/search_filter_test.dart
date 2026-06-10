@@ -1,6 +1,6 @@
 import 'package:calclyo/src/calculator_registry.dart';
-import 'package:calclyo/src/core/categories.dart';
 import 'package:calclyo/src/core/calculator.dart';
+import 'package:calclyo/src/core/categories.dart';
 import 'package:calclyo/src/features/search/search_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -101,9 +101,7 @@ void main() {
       //   - Body Fat (name contains "fat", case-insensitive)
       // It must NOT match "BMI" or "Percentage" or "Tip".
       final result = filterCalculators(query: 'fat', groups: groups);
-      final ids = result
-          .expand((g) => g.calculators.map((c) => c.id))
-          .toList();
+      final ids = result.expand((g) => g.calculators.map((c) => c.id)).toList();
       expect(ids, ['bmi2']);
     });
 
@@ -117,9 +115,7 @@ void main() {
       // "mass" appears only in the subtitle of the algebra "BMI"
       // calculator ("Body mass index") — not in the name of "Body Fat".
       final result = filterCalculators(query: 'mass', groups: groups);
-      final ids = result
-          .expand((g) => g.calculators.map((c) => c.id))
-          .toList();
+      final ids = result.expand((g) => g.calculators.map((c) => c.id)).toList();
       expect(ids, ['bmi']);
     });
 

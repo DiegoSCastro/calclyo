@@ -24,7 +24,7 @@ void main() {
       }).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(23.5, 1.0));
     });
@@ -37,9 +37,11 @@ void main() {
         'n': '85',
         'waist': '80',
       }).run();
-      expect(result.isLeft(), isTrue,
-          reason: 'expected failure for gender=1, h=175, w=70, n=85, waist=80');
+      expect(
+        result.isLeft(),
+        isTrue,
+        reason: 'expected failure for gender=1, h=175, w=70, n=85, waist=80',
+      );
     });
-
   });
 }

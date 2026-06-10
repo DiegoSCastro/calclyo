@@ -15,28 +15,21 @@ void main() {
     final compute = forceDefinition.compute;
 
     test('1 kN = 1000 N', () async {
-      final result = await compute({
-        'v': '1',
-        'unit': 'kN',
-      }).run();
+      final result = await compute({'v': '1', 'unit': 'kN'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(1000.0, 1e-06));
     });
 
     test('1 lbf ~ 4.448 N', () async {
-      final result = await compute({
-        'v': '1',
-        'unit': 'lbf',
-      }).run();
+      final result = await compute({'v': '1', 'unit': 'lbf'}).run();
       final value = result.getOrElse(
         (CalculatorFailure f) =>
-            throw StateError('expected right, got failure: \$f'),
+            throw StateError(r'expected right, got failure: $f'),
       );
       expect(value.primary, closeTo(4.4482216, 0.001));
     });
-
   });
 }

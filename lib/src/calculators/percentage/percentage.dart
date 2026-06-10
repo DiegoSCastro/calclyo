@@ -1,12 +1,22 @@
+import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
+    show parseField;
 import 'package:calclyo/src/core/calculator.dart';
 import 'package:calclyo/src/core/categories.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 
-import 'package:calclyo/src/calculators/rule_of_three/rule_of_three.dart'
-    show parseField;
+/// PercentageMode values.
+/// Percentage calculation modes.
+enum PercentageMode {
+  /// X is what percent of Y.
+  ofWhat,
 
-enum PercentageMode { ofWhat, isWhatPercentOf, change }
+  /// X is Y percent of what.
+  isWhatPercentOf,
+
+  /// Percent change from A to B.
+  change,
+}
 
 const _modeKey = 'mode';
 const _modeOfWhat = 'A% of B';
@@ -89,14 +99,14 @@ CalculatorResult _solve(Map<String, String> values) {
         steps: [
           'Mode: A→B percent change',
           'Formula: ((B − A) / A) × 100',
-          '= ((${b.toStringAsFixed(2)} − ${a.toStringAsFixed(2)}) / '
-              '${a.toStringAsFixed(2)}) × 100',
+          '= ((${b.toStringAsFixed(2)} − ${a.toStringAsFixed(2)}) / ${a.toStringAsFixed(2)}) × 100',
           '= ${pct.toStringAsFixed(6)}%',
         ],
       );
   }
 }
 
+/// Registry entry for the percentage calculator.
 const percentageDefinition = CalculatorDefinition(
   id: 'percentage',
   name: 'Percentage',

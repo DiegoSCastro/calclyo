@@ -27,14 +27,13 @@ void main() {
     expect(find.text('Rule of Three'), findsOneWidget);
   });
 
-  testWidgets('CalculatorFormView renders the rule of three form',
-      (tester) async {
+  testWidgets('CalculatorFormView renders the rule of three form', (
+    tester,
+  ) async {
     // Mount the generic form view directly with the const definition.
     const definition = ruleOfThreeDefinition;
     await tester.pumpWidget(
-      const MaterialApp(
-        home: CalculatorFormView(definition: definition),
-      ),
+      const MaterialApp(home: CalculatorFormView(definition: definition)),
     );
     await tester.pump();
 
