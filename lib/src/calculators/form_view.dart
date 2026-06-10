@@ -1,4 +1,7 @@
 import 'package:calclyo/src/core/calculator.dart';
+import 'package:calclyo/src/features/history/history_entry.dart';
+import 'package:calclyo/src/features/history/history_repository.dart';
+import 'package:calclyo/src/features/history/history_view.dart';
 import 'package:flutter/material.dart';
 
 /// Generic, schema-driven calculator view.
@@ -12,9 +15,20 @@ import 'package:flutter/material.dart';
 /// need their own `stepRenderer` if they want specialised result layout
 /// (the default renders [CalculatorResult] generically).
 class CalculatorFormView extends StatefulWidget {
-  const CalculatorFormView({required this.definition, super.key});
+  const CalculatorFormView({
+    required this.definition,
+    this.initialValues = const <String, String>{},
+    super.key,
+  });
 
   final CalculatorDefinition definition;
+
+  /// Pre-filled values for any of the schema's fields/controls. Keys
+  /// must match [CalculatorInputField.key] / [CalculatorControl.key];
+  /// unknown keys are ignored. When the user opens the form directly
+  /// (no history re-run) this is empty and the form uses the schema's
+  /// `defaultValue` for every field.
+  final Map<String, String> initialValues;
 
   @override
   State<CalculatorFormView> createState() => _CalculatorFormViewState();
@@ -25,19 +39,36 @@ class _CalculatorFormViewState extends State<CalculatorFormView> {
   final Map<String, String> _controlValues = {};
   CalculatorResult? _result;
   String? _error;
+  HistoryEntry? _lastRecorded;
 
   @override
   void initState() {
     super.initState();
     _controllers = {
       for (final field in widget.definition.inputSchema.fields)
-        field.key: TextEditingController(text: field.defaultValue ?? ''),
+        field.key: TextEditingController(
+          text: _initialFor(field.key, field.defaultValue),
+        ),
     };
     for (final c in widget.definition.inputSchema.controls) {
       if (c is SegmentedToggleControl) {
-        _controlValues[c.key] = c.options[c.initialIndex];
+        final fromInitial = widget.initialValues[c.key];
+        if (fromInitial != null && c.options.contains(fromInitial)) {
+          _controlValues[c.key] = fromInitial;
+        } else {
+          _controlValues[c.key] = c.options[c.initialIndex];
+        }
       }
     }
+  }
+
+  /// Resolve the initial value for a field: explicit prefill wins,
+  /// otherwise the schema's `defaultValue`. Returns empty string when
+  /// neither is present (preserves the original behaviour).
+  String _initialFor(String key, String? fallback) {
+    final prefilled = widget.initialValues[key];
+    if (prefilled != null) return prefilled;
+    return fallback ?? '';
   }
 
   @override
@@ -60,11 +91,55 @@ class _CalculatorFormViewState extends State<CalculatorFormView> {
         _result = null;
         _error = failure.message;
       }),
-      (value) => setState(() {
-        _result = value;
-        _error = null;
-      }),
+      (value) {
+        final summary = '${value.primaryLabel} = '
+            '${value.primary.toStringAsFixed(6)}';
+        setState(() {
+          _result = value;
+          _error = null;
+        });
+        _recordHistory(values: values, result: summary);
+      },
     );
+  }
+
+  /// Push the run into history. Best-effort — never throws. De-dupes
+  /// consecutive identical runs so spamming Calculate doesn't fill the
+  /// list with the same entry over and over.
+  void _recordHistory({
+    required Map<String, String> values,
+    required String result,
+  }) {
+    if (!HistoryRepositoryProvider.isReady) return;
+    final idGen = HistoryIdGenerator();
+    final entry = HistoryEntry(
+      id: idGen.next(),
+      calculatorId: widget.definition.id,
+      inputs: Map<String, String>.unmodifiable(values),
+      result: result,
+      timestamp: DateTime.now().toUtc(),
+    );
+    final last = _lastRecorded;
+    if (last != null &&
+        last.calculatorId == entry.calculatorId &&
+        _mapsEqual(last.inputs, entry.inputs)) {
+      // Same calculator + same inputs as the last submit — treat as a
+      // re-run, don't pollute the list.
+      _lastRecorded = entry;
+      return;
+    }
+    _lastRecorded = entry;
+    // Fire-and-forget: persist directly. The history page will pick
+    // it up on its next refresh.
+    HistoryRepositoryProvider.instance.add(entry).run();
+  }
+
+  bool _mapsEqual(Map<String, String> a, Map<String, String> b) {
+    if (a.length != b.length) return false;
+    for (final entry in a.entries) {
+      if (b[entry.key] != entry.value) return false;
+    }
+    return true;
   }
 
   @override

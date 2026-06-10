@@ -32,6 +32,11 @@ class AppShell extends StatelessWidget {
             onPressed: () => context.go('/search'),
           ),
           IconButton(
+            icon: const Icon(Icons.history),
+            tooltip: 'History',
+            onPressed: () => context.go('/history'),
+          ),
+          IconButton(
             icon: const Icon(Icons.settings),
             tooltip: 'Settings',
             onPressed: () => context.go('/settings'),

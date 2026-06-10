@@ -1,5 +1,6 @@
 import 'package:calclyo/src/calculator_registry.dart';
 import 'package:calclyo/src/calculators/form_view.dart';
+import 'package:calclyo/src/features/history/history_view.dart';
 import 'package:calclyo/src/shell/app_shell.dart';
 import 'package:calclyo/src/shell/view/achievements_view.dart';
 import 'package:calclyo/src/shell/view/search_view.dart';
@@ -22,14 +23,29 @@ class AppRouter {
             GoRoute(
               path: definition.route.replaceFirst('/', ''),
               name: definition.id,
-              builder: (context, state) => CalculatorFormView(
-                definition: definition,
-              ),
+              builder: (context, state) {
+                // History taps pass pre-filled inputs through `extra`. The
+                // form view's contract is unchanged when extra is null —
+                // fields fall back to the schema's defaultValue.
+                final extra = state.extra;
+                final initialValues = extra is Map<String, String>
+                    ? extra
+                    : const <String, String>{};
+                return CalculatorFormView(
+                  definition: definition,
+                  initialValues: initialValues,
+                );
+              },
             ),
           GoRoute(
             path: 'achievements',
             name: 'achievements',
             builder: (context, state) => const AchievementsView(),
+          ),
+          GoRoute(
+            path: 'history',
+            name: 'history',
+            builder: (context, state) => const HistoryPage(),
           ),
           GoRoute(
             path: 'search',
