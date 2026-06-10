@@ -1,5 +1,6 @@
-import 'package:calclyo/src/features/category/presentation/view/category_list_view.dart';
-import 'package:calclyo/src/features/rule_of_three/presentation/view/rule_of_three_view.dart';
+import 'package:calclyo/src/calculators/category_list_view.dart';
+import 'package:calclyo/src/calculator_registry.dart';
+import 'package:calclyo/src/calculators/form_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,11 +15,14 @@ class AppRouter {
         name: 'home',
         builder: (context, state) => const CategoryListView(),
         routes: [
-          GoRoute(
-            path: 'rule-of-three',
-            name: 'rule-of-three',
-            builder: (context, state) => const RuleOfThreeView(),
-          ),
+          for (final definition in calculatorRegistry.all)
+            GoRoute(
+              path: definition.route.replaceFirst('/', ''),
+              name: definition.id,
+              builder: (context, state) => CalculatorFormView(
+                definition: definition,
+              ),
+            ),
         ],
       ),
     ],
